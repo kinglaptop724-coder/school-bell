@@ -1,0 +1,17 @@
+{
+  "name": "ระบบออดและประกาศเสียงตามสายอัตโนมัติ",
+  "short_name": "ออดโรงเรียน",
+  "description": "ระบบออดและประกาศเสียงตามสาย โรงเรียนอนุบาลชุมชนหนองบัวแดง ใช้งานได้ทั้งออนไลน์และออฟไลน์",
+  "lang": "th",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#E6E1FA",
+  "theme_color": "#8B6BF6",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
