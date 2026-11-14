@@ -1088,6 +1088,16 @@
             .rm-bell { height:60px; font-size:13.5px; padding:0 10px; }
         }
     </style>
+    <style id="nav-icons-ui">
+        /* เมนูด้านบน (จอ >= 1024px): แสดงเฉพาะไอคอน ส่วนมือถือ/แท็บเล็ตที่เมนูอยู่ด้านล่างยังมีข้อความ */
+        @media (min-width: 1024px) {
+            .top-nav { gap: 6px; }
+            .main-tab { min-width: 56px; padding: 10px 16px !important; }
+            .main-tab > span { display: none; }
+            .main-tab i { font-size: 22px; }
+            .tab-count { top: 2px; right: 4px; }
+        }
+    </style>
     </head>
 <body class="selection:bg-violet-200 selection:text-slate-900">
 <!-- ===== LOCK SCREEN (ถามรหัสผ่านก่อนเข้าระบบ) ===== -->
@@ -1360,12 +1370,12 @@
         </div>
 
         <nav id="mainTabs" aria-label="เมนูหลัก" class="top-nav">
-            <button data-tabbtn="home" onclick="switchMainTab('home')" class="main-tab"><i class="fa-solid fa-house"></i><span>หน้าหลัก</span></button>
-            <button data-tabbtn="bell" onclick="switchMainTab('bell')" class="main-tab"><i class="fa-solid fa-bell"></i><span>ตีออด</span></button>
-            <button data-tabbtn="pa" onclick="switchMainTab('pa')" class="main-tab"><i class="fa-solid fa-microphone-lines"></i><span>ประกาศเสียง</span></button>
-            <button data-tabbtn="library" onclick="switchMainTab('library')" class="main-tab"><i class="fa-solid fa-compact-disc"></i><span>คลังเสียง</span><em id="tabCount_library" class="tab-count">0</em></button>
-            <button data-tabbtn="schedule" onclick="switchMainTab('schedule')" class="main-tab"><i class="fa-solid fa-calendar-days"></i><span>ตารางเวลา</span></button>
-            <button data-tabbtn="remote" onclick="switchMainTab('remote')" class="main-tab"><i class="fa-solid fa-tower-broadcast"></i><span>รีโมต</span></button>
+            <button data-tabbtn="home" onclick="switchMainTab('home')" class="main-tab" title="หน้าหลัก" aria-label="หน้าหลัก"><i class="fa-solid fa-house"></i><span>หน้าหลัก</span></button>
+            <button data-tabbtn="bell" onclick="switchMainTab('bell')" class="main-tab" title="ตีออด" aria-label="ตีออด"><i class="fa-solid fa-bell"></i><span>ตีออด</span></button>
+            <button data-tabbtn="pa" onclick="switchMainTab('pa')" class="main-tab" title="ประกาศเสียง" aria-label="ประกาศเสียง"><i class="fa-solid fa-microphone-lines"></i><span>ประกาศเสียง</span></button>
+            <button data-tabbtn="library" onclick="switchMainTab('library')" class="main-tab" title="คลังเสียง" aria-label="คลังเสียง"><i class="fa-solid fa-compact-disc"></i><span>คลังเสียง</span><em id="tabCount_library" class="tab-count">0</em></button>
+            <button data-tabbtn="schedule" onclick="switchMainTab('schedule')" class="main-tab" title="ตารางเวลา" aria-label="ตารางเวลา"><i class="fa-solid fa-calendar-days"></i><span>ตารางเวลา</span></button>
+            <button data-tabbtn="remote" onclick="switchMainTab('remote')" class="main-tab" title="รีโมต" aria-label="รีโมต"><i class="fa-solid fa-tower-broadcast"></i><span>รีโมต</span></button>
         </nav>
 
         <div class="header-actions">
