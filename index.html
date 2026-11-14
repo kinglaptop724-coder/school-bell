@@ -1116,6 +1116,30 @@
             .rmx-head { align-items:flex-start; }
             .rmx-ttl small { display:none; }
         }
+            /* ===== แผงกดเสียงออดด่วน (โหมดมือถือ) ===== */
+        .rmb-speak { display:flex; align-items:center; gap:10px; padding:10px 14px; margin-bottom:12px; background:#FAF9FF; border:1.5px solid #ECE8FA; border-radius:14px; font-size:13.5px; font-weight:600; color:#4A4560; cursor:pointer; }
+        .rmb-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:10px; }
+        .rmb-card { display:flex; align-items:center; gap:12px; padding:12px 14px; border:1.5px solid #D6CCFC; border-radius:18px; background:#fff; text-align:left; cursor:pointer; transition:background-color .15s, border-color .15s, transform .1s; }
+        .rmb-card:hover { background:#F5F2FF; border-color:#A28AF8; }
+        .rmb-card:active { transform:scale(.98); }
+        .rmb-ico { width:42px; height:42px; border-radius:14px; background:#FFEDD5; color:#EA580C; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+        .rmb-txt { flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.35; }
+        .rmb-txt b { font-size:14.5px; color:#2E2A4A; }
+        .rmb-txt small { font-size:12px; color:#8A86A8; }
+        .rmb-go { width:36px; height:36px; border-radius:50%; background:#7655E8; color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; box-shadow:0 6px 14px -6px rgba(97,64,204,.7); }
+        .rmb-sos { display:flex; align-items:center; gap:12px; margin-top:12px; padding:12px 14px; background:#FFF7ED; border:1.5px solid #FDD9B0; border-radius:18px; }
+        .rmb-sos-ico { width:42px; height:42px; border-radius:14px; background:#fff; border:1px solid #FDD9B0; color:#EA580C; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+        .rmb-sos-txt { flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.4; }
+        .rmb-sos-txt b { font-size:13.5px; color:#7C2D12; }
+        .rmb-sos-txt small { font-size:12px; color:#C2410C; }
+        .rmb-sos-btn { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 16px; border:0; border-radius:14px; background:#EA580C; color:#fff; font-size:14px; font-weight:700; cursor:pointer; flex-shrink:0; }
+        .rmb-sos-btn:hover { background:#C2410C; }
+        @media (max-width:640px) {
+            .rmb-grid { grid-template-columns:1fr; }
+            .rmb-sos { flex-wrap:wrap; }
+            .rmb-sos-txt { flex-basis:calc(100% - 60px); }
+            .rmb-sos-btn { width:100%; justify-content:center; }
+        }
     </style>
     <style id="nav-icons-ui">
         /* เมนูด้านบน (จอ >= 1024px): แสดงเฉพาะไอคอน ส่วนมือถือ/แท็บเล็ตที่เมนูอยู่ด้านล่างยังมีข้อความ */
@@ -1947,6 +1971,20 @@
                     <!-- ===== โหมดมือถือ: ผู้สั่ง ===== -->
                     <div id="rmPhonePanel" class="hidden">
                         <div id="rmPhoneStatus" class="rm-status rm-gap"><span class="rm-dot"></span><span id="rmPhoneStatusText">กำลังตรวจสอบสถานะคอมโรงเรียน...</span></div>
+
+                        <div class="sec-title mb-2.5"><i class="fa-solid fa-bell"></i>แผงกดเสียงออดด่วน</div>
+                        <div class="rm-gap">
+                            <label class="rmb-speak">
+                                <input id="rmAutoSpeak" type="checkbox" checked class="w-4 h-4 rounded accent-sky-600">
+                                <span>พูดแจ้งเตือนหลังจบเสียงออด</span>
+                            </label>
+                            <div id="rmBellGrid" class="rmb-grid"></div>
+                            <div class="rmb-sos">
+                                <div class="rmb-sos-ico"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                <div class="rmb-sos-txt"><b>สัญญาณแจ้งเหตุฉุกเฉิน / ซ้อมอพยพหนีไฟ</b><small>ไซเรนเตือนภัย + ประกาศให้อพยพไปจุดรวมพล</small></div>
+                                <button type="button" onclick="remoteEmergency()" class="rmb-sos-btn"><i class="fa-solid fa-triangle-exclamation"></i>แจ้งเหตุ</button>
+                            </div>
+                        </div>
 
                         <div class="sec-title mb-2.5"><i class="fa-solid fa-bullhorn"></i>ประกาศเสียงตามสายโดยไม่ต้องเดินไปจับไมค์</div>
                         <div class="rm-gap">
@@ -3303,8 +3341,8 @@
             return map[type] || 'กำลังส่งสัญญาณเสียงออด...';
         }
 
-        function triggerManualBell(bellType) {
-            const shouldSpeak = document.getElementById('autoSpeakOnManualBell').checked;
+        function triggerManualBell(bellType, speakOverride) {
+            const shouldSpeak = (typeof speakOverride === 'boolean') ? speakOverride : document.getElementById('autoSpeakOnManualBell').checked;
             const defaultPhrases = {
                 'flag_lineup': 'ได้เวลาเคารพธงชาติ ขอให้นักเรียนทุกคนเข้าแถวบริเวณหน้าเสาธงค่ะ',
                 'class_change': 'หมดเวลาเรียนคาบเรียนนี้ ขอให้นักเรียนเตรียมตัวเรียนในคาบถัดไปค่ะ',
@@ -4921,6 +4959,7 @@
         }
 
         function remoteInit() {
+            renderRemoteBellPad();
             try {
                 const r = localStorage.getItem(RM_ROLE_LS);
                 rmRole = (r === 'pc' || r === 'phone') ? r : (IS_MOBILE ? 'phone' : 'pc');
@@ -5038,7 +5077,8 @@
                 } else if (c.type === 'bell') {
                     rmSetLast('ตีออด ' + getBellDisplayName(d.bell));
                     addActivityLog('📱 สั่งจากมือถือ: ตีออด ' + getBellDisplayName(d.bell));
-                    triggerManualBell(d.bell);
+                    if (d.bell === 'emergency') confirmEmergencySiren();
+                    else triggerManualBell(d.bell, d.speak !== false);
                 } else if (c.type === 'tts') {
                     const text = String(d.text || '').trim();
                     if (!text) return;
@@ -5146,7 +5186,23 @@
         async function remoteBell(bell) {
             const name = getBellDisplayName(bell);
             const ok = await askConfirm({ title: `สั่งตีออด "${name}"?`, text: 'คอมโรงเรียนจะส่งเสียงออกลำโพงทันที', okText: 'ส่งคำสั่ง', tone: 'info', icon: 'fa-bell' });
-            if (ok) rmSend('bell', { bell }, 'ตีออด ' + name);
+            if (ok) {
+                const sp = $id('rmAutoSpeak');
+                rmSend('bell', { bell, speak: sp ? sp.checked : true }, 'ตีออด ' + name);
+            }
+        }
+        async function remoteEmergency() {
+            const ok = await askConfirm({ title: 'สั่งเปิดสัญญาณแจ้งเหตุฉุกเฉิน?', text: 'ลำโพงทั้งโรงเรียนจะส่งเสียงไซเรนและประกาศให้อพยพไปจุดรวมพลทันที ใช้เมื่อเกิดเหตุจริงหรือซ้อมอพยพเท่านั้น', okText: 'เปิดสัญญาณฉุกเฉิน', tone: 'warn', icon: 'fa-triangle-exclamation' });
+            if (ok) rmSend('bell', { bell: 'emergency' }, 'สัญญาณแจ้งเหตุฉุกเฉิน');
+        }
+        function renderRemoteBellPad() {
+            const box = $id('rmBellGrid'); if (!box || typeof BELL_SLOTS === 'undefined') return;
+            box.innerHTML = BELL_SLOTS.map(s => `
+                <button type="button" class="rmb-card" onclick="remoteBell('${s.key}')">
+                    <span class="rmb-ico"><i class="${s.icon}"></i></span>
+                    <span class="rmb-txt"><b>${escapeHtml(s.title.replace(/^\d+\.\s*/, ''))}</b><small>${escapeHtml(s.badge)}</small></span>
+                    <span class="rmb-go"><i class="fa-solid fa-bell"></i></span>
+                </button>`).join('');
         }
         async function remoteTts() {
             const el = $id('rmText'), text = el ? el.value.trim() : '';
