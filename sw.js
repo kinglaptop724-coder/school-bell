@@ -1,7 +1,7 @@
 /* Service Worker - ระบบออดโรงเรียน (ใช้งานออฟไลน์ได้เต็มรูปแบบ)
  * แคชไฟล์ทั้งหมดของแอปไว้ตอนเปิดครั้งแรก แล้วเปิดจากแคชก่อนเสมอ
  * พร้อมอัปเดตเวอร์ชันใหม่เงียบๆ เมื่อมีอินเทอร์เน็ต (เห็นผลเมื่อเปิดหน้าใหม่รอบถัดไป) */
-const VERSION = 'remote-5';
+const VERSION = 'remote-6';
 const CACHE = 'school-bell-' + VERSION;
 const LOGO_URL = 'https://i.postimg.cc/LsYtytm1/logo-rong-re-yn.png';
 const LOGO_CACHE = 'school-logo'; // แยกจากแคชหลัก เพื่อไม่ถูกลบตอนอัปเดตเวอร์ชัน
