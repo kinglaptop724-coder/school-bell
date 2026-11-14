@@ -1615,27 +1615,23 @@
 
                 <!-- SECTION 3: HANDS-FREE VOICE COMMAND, VOICE RECORDER RELAY & AI TEXT-TO-SPEECH PA -->
                 <section data-tab="pa" class="tab-panel clean-card rounded-3xl p-5 sm:p-6">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-4 border-b border-slate-100">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-lg">
-                                <i class="fa-solid fa-bullhorn"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-base sm:text-lg font-bold text-slate-800">ประกาศเสียงตามสายโดยไม่ต้องเดินไปจับไมค์</h2>
-                                <p class="text-xs text-slate-500">อัดเสียงฝากประกาศป้องกันไมค์หอน หรือพิมพ์ข้อความให้ระบบพูดแทน</p>
-                            </div>
+                    <div class="pa-head">
+                        <div class="pa-head-ico"><i class="fa-solid fa-bullhorn"></i></div>
+                        <div class="pa-head-text">
+                            <h2 class="pa-head-title">ประกาศเสียงตามสายโดยไม่ต้องเดินไปจับไมค์</h2>
+                            <p class="pa-head-sub">อัดเสียงฝากประกาศป้องกันไมค์หอน หรือพิมพ์ข้อความให้ระบบพูดแทน</p>
                         </div>
                     </div>
 
                     <!-- Mode Tabs -->
-                    <div class="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-2xl border border-slate-200 mb-5">
+                    <div class="pa-modes">
                         <button id="paTabBtn_voice" onclick="switchPATab('voice')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-white text-sky-700 shadow-2xs transition cursor-pointer flex items-center justify-center gap-2">
                             <i class="fa-solid fa-microphone-lines"></i>
-                            <span>1. อัดเสียงประกาศ</span>
+                            <span class="pa-m-lbl"><span class="pa-m-no">1. </span><span class="pa-m-a">อัดเสียงประกาศ</span><span class="pa-m-b pa-m-mob">พูดแล้วเปิดให้เอง</span></span>
                         </button>
                         <button id="paTabBtn_tts" onclick="switchPATab('tts')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer flex items-center justify-center gap-2">
                             <i class="fa-solid fa-comment-dots"></i>
-                            <span>2. พิมพ์ข้อความให้ AI ประกาศแทน</span>
+                            <span class="pa-m-lbl"><span class="pa-m-no">2. </span><span class="pa-m-a">พิมพ์ข้อความ</span> <span class="pa-m-b">ให้ AI ประกาศแทน</span></span>
                         </button>
                     </div>
 
@@ -1938,16 +1934,66 @@
         </div>
     </div>
 
+
+    <style id="mobile-tidy-v1">
+        /* ===== หน้าประกาศเสียง: ส่วนหัว + ตัวสลับโหมด ===== */
+        .pa-head { display:flex; align-items:center; gap:12px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid #F1F5F9; }
+        .pa-head-ico { width:40px; height:40px; border-radius:12px; background:#E9E3FF; color:#7655E8; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+        .pa-head-text { min-width:0; }
+        .pa-head-title { margin:0; font-size:18px; font-weight:700; color:#1E293B; line-height:1.35; text-wrap:balance; }
+        .pa-head-sub { margin:2px 0 0; font-size:12px; color:#64748B; line-height:1.5; }
+        .pa-modes { display:grid; grid-template-columns:1fr 1fr; gap:6px; padding:4px; background:#F1F5F9; border:1px solid #E2E8F0; border-radius:16px; margin-bottom:20px; }
+        .pa-m-mob { display:none; }
+
+        @media (max-width:640px) {
+            .pa-head { align-items:flex-start; padding-bottom:14px; margin-bottom:14px; }
+            .pa-head-title { font-size:17px; }
+            .pa-head-sub { font-size:13px; margin-top:4px; text-wrap:pretty; }
+
+            .pa-modes { margin-bottom:16px; }
+            .pa-modes button { flex-direction:column; gap:5px; padding:10px 6px; min-height:70px; text-align:center; line-height:1.25; }
+            .pa-modes button > i { font-size:17px; }
+            .pa-m-lbl { display:flex; flex-direction:column; align-items:center; gap:1px; }
+            .pa-m-no { display:none; }
+            .pa-m-a { font-size:13.5px; }
+            .pa-m-b { font-size:11.5px; font-weight:500; opacity:.75; }
+            .pa-m-lbl .pa-m-mob { display:block; }
+
+            /* การ์ดอัดเสียง */
+            #relayCard .rl-title { font-size:19px; text-wrap:balance; }
+            #relayCard .rl-sub { text-wrap:balance; padding:0 6px; }
+            #relayCard .rl-replay { min-width:160px; justify-content:center; }
+            #relayCard .rl-steps { padding-top:16px; gap:8px; }
+            #relayCard .rl-steps li { position:relative; align-items:center; }
+            #relayCard .rl-no { position:relative; z-index:1; width:28px; height:28px; }
+            #relayCard .rl-steps li + li::before { content:""; position:absolute; top:13px; left:calc(-50% - 8px); width:calc(100% + 8px); height:2px; border-radius:2px; background:#E3DEF7; }
+            #relayCard .rl-steps li.is-done + li::before { background:#16A34A; }
+            #relayCard .rl-steps em { font-size:12.5px; line-height:1.3; text-wrap:balance; }
+
+            /* แท็บพิมพ์ข้อความ: ปุ่มข้อความสำเร็จรูป 2 คอลัมน์ */
+            .pa-chips { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+            .pa-chips-lbl { grid-column:1 / -1; margin:0 0 -2px; }
+            .pa-chips button { justify-content:center; height:42px; padding:0 8px; font-size:13px; white-space:nowrap; }
+
+            /* ท้ายหน้า */
+            .app-shell footer.ft-wrap { margin-top:20px; padding:18px 16px 24px; }
+            .ft-dev { line-height:1.5; }
+            .ft-dev span { display:block; }
+            .ft-dev .ft-a { font-size:13px; }
+            .ft-sub { margin-top:6px; line-height:1.5; text-wrap:balance; }
+        }
+    </style>
+
     <!-- Hidden file input for per-button custom WAV/MP3 replacement -->
     <input id="perButtonFileInput" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/*" class="hidden" onchange="handlePerButtonFileSelected(event)">
 
     <!-- CLEAN FOOTER WITH DEVELOPER CREDIT -->
-    <footer class="border-t border-sky-100 bg-white mt-6 py-5 px-4 lg:px-8">
+    <footer class="ft-wrap border-t border-sky-100 bg-white mt-6 py-5 px-4 lg:px-8">
         <div class="flex flex-col items-center justify-center gap-3 text-center">
             <div class="flex items-center gap-3">
                 <div>
-                    <p class="text-xs sm:text-sm font-bold text-slate-700">พัฒนาโดย นายณัฐพงศ์ บาลไทสงค์ ตำแหน่ง ครู โรงเรียนอนุบาลชุมชนหนองบัวแดง</p>
-                    <p class="text-xs text-slate-500">สำนักงานเขตพื้นที่การศึกษาประถมศึกษาชัยภูมิ เขต 1</p>
+                    <p class="ft-dev text-xs sm:text-sm font-bold text-slate-700"><span class="ft-a">พัฒนาโดย นายณัฐพงศ์ บาลไทสงค์</span> <span class="ft-b">ตำแหน่ง ครู โรงเรียนอนุบาลชุมชนหนองบัวแดง</span></p>
+                    <p class="ft-sub text-xs text-slate-500">สำนักงานเขตพื้นที่การศึกษาประถมศึกษาชัยภูมิ เขต 1</p>
                 </div>
             </div>
         </div>
