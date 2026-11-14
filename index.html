@@ -1048,6 +1048,14 @@
         .lk-msg.err { color:#BE123C; background:#FFF1F2; border:1px solid #FECDD3; padding:10px 14px; border-radius:14px; }
         .lk-msg.ok { color:#15803D; background:#F0FDF4; border:1px solid #BBF7D0; padding:10px 14px; border-radius:14px; }
         /* ===== โลโก้โรงเรียน (ถ้าโหลดไม่ได้ จะกลับไปใช้ไอคอนกระดิ่งเดิม) ===== */
+        #pcKeyModal { position:fixed; inset:0; z-index:91; display:none; align-items:center; justify-content:center; padding:16px; background:rgba(30,20,70,.42); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); }
+        #pcKeyModal.open { display:flex; }
+        #pcKeyModal .cm-card { max-width:400px; border-radius:28px; padding-bottom:20px; }
+        .pk-input { width:100%; margin-top:16px; height:46px; padding:0 14px; border:1.5px solid #E6E2F8; border-radius:14px; background:#FAF9FF; font-size:16px; text-align:center; letter-spacing:.08em; color:#2E2A4A; }
+        .pk-input:focus { outline:none; border-color:#7655E8; background:#fff; box-shadow:0 0 0 4px rgba(118,85,232,.15); }
+        .pk-err { min-height:20px; margin-top:8px; font-size:13px; font-weight:600; color:#E11D48; }
+        .rmx-forget { display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:6px 10px; border:0; border-radius:10px; background:transparent; color:#8A86A8; font-size:12.5px; cursor:pointer; }
+        .rmx-forget:hover { background:#F4F2FC; color:#6140CC; }
         .school-logo { display:block; width:100%; height:100%; object-fit:contain; }
         .brand-tile.has-logo { background:#fff; padding:3px; box-shadow:0 0 0 1px rgba(255,255,255,.5), 0 6px 14px -6px rgba(40,20,120,.45); }
         .brand-tile.has-logo > i { display:none; }
@@ -2107,6 +2115,7 @@
                                 <li><i class="fa-solid fa-key"></i><span>"รหัสแจ้งเตือน" ต้องตรงกันทั้งสองเครื่อง (หน้าประกาศเสียง → ปรับแต่งเสียง → แจ้งเตือนบนมือถือ)</span></li>
                             </ul>
                         </div>
+                        <button type="button" class="rmx-forget" onclick="rmForgetPc()"><i class="fa-solid fa-user-slash"></i>เลิกใช้เครื่องนี้เป็นคอมโรงเรียน</button>
                     </div>
                 </section>
 
@@ -2344,6 +2353,21 @@
             <button type="button" id="cmOk" class="cm-btn ok warn">ยืนยัน</button>
         </div>
     </div>
+</div>
+
+<!-- ยืนยันว่าเป็นคอมเครื่องเสียงของโรงเรียน -->
+<div id="pcKeyModal" role="dialog" aria-modal="true" aria-labelledby="pkTitle">
+    <form id="pkForm" class="cm-card" autocomplete="off">
+        <div class="cm-ico info"><i class="fa-solid fa-desktop"></i></div>
+        <div id="pkTitle" class="cm-title">ยืนยันว่าเป็นคอมเครื่องเสียงของโรงเรียน</div>
+        <div class="cm-text">ใส่รหัสคอมโรงเรียน เฉพาะเครื่องที่ต่อกับลำโพงตามสายเท่านั้น</div>
+        <input id="pkInput" type="password" class="pk-input" placeholder="รหัสคอมโรงเรียน" autocomplete="off" required>
+        <div id="pkErr" class="pk-err" role="alert"></div>
+        <div class="cm-actions">
+            <button type="button" id="pkCancel" class="cm-btn cancel">ยกเลิก</button>
+            <button type="submit" id="pkOk" class="cm-btn ok">ยืนยัน</button>
+        </div>
+    </form>
 </div>
 
 
@@ -4953,7 +4977,7 @@
          * 15. รีโมตสั่งงานลำโพงจากมือถือ (Apps Script: cmd_send / cmd_poll / cmd_status)
          *   มือถือ --cmd_send--> Apps Script (คิวคำสั่ง) <--cmd_poll-- คอมโรงเรียน (เล่นเสียงเอง)
          **************************************************************/
-        const RM_ROLE_LS = 'nongbuadaeng_remote_role', RM_RX_LS = 'nongbuadaeng_remote_rx';
+        const RM_ROLE_LS = 'nongbuadaeng_remote_role', RM_RX_LS = 'nongbuadaeng_remote_rx', RM_PCKEY_LS = 'nongbuadaeng_remote_pckey';
         const RM_POLL_MS = 4000, RM_FAIL_POLL_MS = 8000, RM_STATUS_MS = 5000;
         let rmRole = 'phone', rmRxOn = false, rmSince = null, rmPollTimer = null, rmPolling = false;
         let rmFail = 0, rmLibSig = '', rmStatusTimer = null, rmLastLibList = [];
@@ -4977,12 +5001,76 @@
             return e ? ('ผิดพลาด: ' + e) : 'ส่งไม่สำเร็จ';
         }
 
+        /* ---------- ยืนยันเครื่องคอมโรงเรียนด้วยรหัส (PC_KEY ใน Apps Script) ---------- */
+        function rmGetPcKey() { try { return localStorage.getItem(RM_PCKEY_LS) || ''; } catch (e) { return ''; } }
+        function rmClearPcKey() { try { localStorage.removeItem(RM_PCKEY_LS); } catch (e) {} }
+        function rmPcErrText(j) {
+            const e = j && j.error;
+            if (e === 'bad pckey') return 'รหัสไม่ถูกต้อง';
+            if (e === 'locked') return 'ใส่รหัสผิดหลายครั้ง กรุณารอ 10 นาทีแล้วลองใหม่';
+            if (e === 'pckey not set') return 'ยังไม่ได้ตั้งค่า PC_KEY ใน Apps Script (ดูวิธีตั้งใน README)';
+            if (e === 'forbidden') return 'รหัสแจ้งเตือนไม่ถูกต้อง (ต้องตรงกับ BELL_KEY)';
+            return e ? ('ผิดพลาด: ' + e) : 'ตรวจสอบไม่สำเร็จ';
+        }
+        // เปิดกล่องใส่รหัส: คืน true เมื่อยืนยันผ่าน, false เมื่อยกเลิก
+        function rmVerifyPc() {
+            if (!navigator.onLine) { showToast('ต้องมีอินเทอร์เน็ตเพื่อยืนยันเครื่องครั้งแรก', 'warn'); return Promise.resolve(false); }
+            const key = getPushKey();
+            if (!key) { showToast('ใส่รหัสแจ้งเตือนก่อน (หน้าประกาศเสียง → แจ้งเตือนบนมือถือ)', 'warn'); return Promise.resolve(false); }
+            const modal = $id('pcKeyModal'), form = $id('pkForm'), input = $id('pkInput'), err = $id('pkErr'), ok = $id('pkOk'), cancel = $id('pkCancel');
+            input.value = ''; err.innerText = '';
+            modal.classList.add('open');
+            setTimeout(() => input.focus(), 30);
+            return new Promise(resolve => {
+                const close = (v) => {
+                    modal.classList.remove('open');
+                    form.onsubmit = cancel.onclick = modal.onclick = null;
+                    document.removeEventListener('keydown', onKey, true);
+                    input.value = '';
+                    resolve(v);
+                };
+                const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); close(false); } };
+                document.addEventListener('keydown', onKey, true);
+                cancel.onclick = () => close(false);
+                modal.onclick = (e) => { if (e.target === modal) close(false); };
+                form.onsubmit = async (e) => {
+                    e.preventDefault();
+                    const code = input.value.trim();
+                    if (!code) return;
+                    ok.disabled = true; err.innerText = '';
+                    try {
+                        const j = await pushApi({ action: 'cmd_pc_check', key, pckey: code });
+                        if (j && j.ok) {
+                            try { localStorage.setItem(RM_PCKEY_LS, code); } catch (x) {}
+                            close(true);
+                        } else {
+                            err.innerText = rmPcErrText(j);
+                            input.select();
+                        }
+                    } catch (x) {
+                        err.innerText = 'ติดต่อเซิร์ฟเวอร์ไม่ได้ ลองใหม่อีกครั้ง';
+                    } finally { ok.disabled = false; }
+                };
+            });
+        }
+        function rmForgetPc() {
+            askConfirm({ title: 'เลิกใช้เครื่องนี้เป็นคอมโรงเรียน?', text: 'เครื่องนี้จะหยุดรับคำสั่งจากมือถือ ถ้าจะกลับมาใช้ต้องใส่รหัสคอมโรงเรียนใหม่', okText: 'เลิกใช้', tone: 'warn', icon: 'fa-user-slash' }).then(ok => {
+                if (!ok) return;
+                rmClearPcKey();
+                rmRxOn = false;
+                try { localStorage.setItem(RM_RX_LS, '0'); } catch (e) {}
+                setRemoteRole('phone');
+            });
+        }
+
         function remoteInit() {
+            // เปิดเป็นโหมดคอมโรงเรียนได้ก็ต่อเมื่อเครื่องนี้เคยใส่รหัสคอมโรงเรียนผ่านแล้วเท่านั้น (ค่าเริ่มต้นคือมือถือเสมอ)
             try {
                 const r = localStorage.getItem(RM_ROLE_LS);
-                rmRole = (r === 'pc' || r === 'phone') ? r : (IS_MOBILE ? 'phone' : 'pc');
-                rmRxOn = localStorage.getItem(RM_RX_LS) === '1';
-            } catch (e) { rmRole = IS_MOBILE ? 'phone' : 'pc'; }
+                rmRole = (r === 'pc' && rmGetPcKey()) ? 'pc' : 'phone';
+                if (r === 'pc' && rmRole !== 'pc') localStorage.setItem(RM_ROLE_LS, 'phone');
+                rmRxOn = rmRole === 'pc' && localStorage.getItem(RM_RX_LS) === '1';
+            } catch (e) { rmRole = 'phone'; rmRxOn = false; }
             rmRender();
             if (rmRole === 'pc' && rmRxOn) startRemoteRx();
             rmStatusTimer = setInterval(() => {
@@ -5002,8 +5090,12 @@
             const t = $id('rmRxToggle'); if (t) t.checked = rmRxOn;
         }
 
-        function setRemoteRole(role) {
+        async function setRemoteRole(role) {
             if (role !== 'phone' && role !== 'pc') return;
+            if (role === 'pc' && !rmGetPcKey()) {
+                if (!(await rmVerifyPc())) return;
+                notifyOk('ยืนยันแล้ว เครื่องนี้เป็นคอมโรงเรียน');
+            }
             if (role === 'pc' && rmRecing) { rmRecCancel = true; rmStopRecord(); }
             rmRole = role;
             try { localStorage.setItem(RM_ROLE_LS, role); } catch (e) {}
@@ -5051,12 +5143,19 @@
                     const key = getPushKey();
                     if (!key) throw new Error('ยังไม่ได้ใส่รหัสแจ้งเตือน');
                     if (!navigator.onLine) throw new Error('ไม่มีอินเทอร์เน็ต');
-                    const payload = { action: 'cmd_poll', key };
+                    const payload = { action: 'cmd_poll', key, pckey: rmGetPcKey() };
                     if (rmSince !== null) { payload.since = rmSince; payload.ack = rmSince; }
                     const lib = libraryAudioFiles.map(f => ({ id: rmShortId(f.id), name: f.fileName }));
                     const sig = lib.map(x => x.id).join('|');
                     if (sig !== rmLibSig) payload.lib = lib;
                     const j = await pushApi(payload);
+                    if (j && (j.error === 'forbidden pc' || j.error === 'pckey not set')) {
+                        rmClearPcKey(); rmRxOn = false;
+                        try { localStorage.setItem(RM_RX_LS, '0'); } catch (e) {}
+                        setRemoteRole('phone');
+                        showToast(j.error === 'pckey not set' ? 'ยังไม่ได้ตั้งค่า PC_KEY ใน Apps Script' : 'รหัสคอมโรงเรียนไม่ถูกต้องหรือถูกเปลี่ยนแล้ว เครื่องนี้จึงหยุดรับคำสั่ง', 'err', { title: 'หยุดโหมดคอมโรงเรียน' });
+                        return;
+                    }
                     if (!j || !j.ok) throw new Error(j && j.error === 'forbidden' ? 'รหัสแจ้งเตือนไม่ถูกต้อง' : ((j && j.error) || 'ตอบกลับไม่ถูกต้อง'));
                     rmLibSig = sig;
                     rmFail = 0;
@@ -5407,7 +5506,7 @@
         /* ฝั่งคอมโรงเรียน: ดึงไฟล์เสียงที่มือถืออัดไว้ แล้วเปิดออกลำโพง */
         async function rmPlayVoice(d) {
             try {
-                const j = await pushApi({ action: 'cmd_audio', key: getPushKey(), id: d.aid });
+                const j = await pushApi({ action: 'cmd_audio', key: getPushKey(), pckey: rmGetPcKey(), id: d.aid });
                 if (!j || !j.ok || !j.audio) {
                     rmSetLast('โหลดเสียงจากมือถือไม่สำเร็จ (' + ((j && j.error) || 'ไม่พบไฟล์') + ')');
                     notifyWarn('โหลดเสียงประกาศจากมือถือไม่สำเร็จ ให้ลองส่งใหม่อีกครั้ง');
