@@ -1568,11 +1568,11 @@
                             <circle class="ring-track p" cx="100" cy="100" r="80" transform="rotate(135 100 100)" style="stroke-dasharray: 376.99 502.65"/>
                             <circle id="volRingArc" class="ring-arc p" cx="100" cy="100" r="80" transform="rotate(135 100 100)"/>
                         </svg>
-                        <div class="ring-center"><div id="volumeLabel" class="ring-value">85%</div></div>
+                        <div class="ring-center"><div id="volumeLabel" class="ring-value">100%</div></div>
                         <button id="muteBtn" onclick="toggleMute()" class="ring-icon-btn" title="เปิด/ปิดเสียงลำโพงหลัก" aria-label="เปิดหรือปิดเสียงลำโพงหลัก"><i id="volumeIcon" class="fa-solid fa-volume-high"></i></button>
                     </div>
                     <div class="ring-ends"><span>0%</span><span>100%</span></div>
-                    <input id="masterVolumeSlider" type="range" min="0" max="100" value="85" oninput="updateMasterVolume(this.value)" class="vol-range cursor-pointer" aria-label="ระดับเสียงลำโพงหลัก">
+                    <input id="masterVolumeSlider" type="range" min="0" max="100" value="100" oninput="updateMasterVolume(this.value)" class="vol-range cursor-pointer" aria-label="ระดับเสียงลำโพงหลัก">
                 </div>
 
                 <!-- Hourly bell chart -->
@@ -2503,7 +2503,7 @@
          * 1. STATE, BELL DEFINITIONS & DEFAULT TIMETABLES
          **************************************************************/
         let audioCtx = null;
-        let masterVolume = 0.85;
+        let masterVolume = 1.0;
         let deckVolume = 1.0;
         let isMuted = false;
         let activeOscillators = [];
