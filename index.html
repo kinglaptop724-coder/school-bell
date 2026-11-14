@@ -1071,6 +1071,10 @@
     var KEY = 'nongbuadaeng_lock_v1', FAILKEY = 'nongbuadaeng_lock_fail';
     var AUTO_LOCK_MIN = 10;   // ล็อกอัตโนมัติเมื่อไม่มีใครใช้งานกี่นาที (0 = ปิด)
     var MAX_FAILS = 5, WAIT_SEC = 30, MIN_LEN = 4;
+    var REMEMBER_KEY = 'nongbuadaeng_session', REMEMBER_DAYS = 30; // จำการเข้าสู่ระบบไว้กี่วัน (รีเฟรชไม่ต้องใส่รหัสใหม่)
+    function remembered() { try { var t = parseInt(localStorage.getItem(REMEMBER_KEY) || '0', 10); return t > 0 && Date.now() - t < REMEMBER_DAYS * 86400000; } catch (e) { return false; } }
+    function setRemember() { try { localStorage.setItem(REMEMBER_KEY, String(Date.now())); } catch (e) {} }
+    function clearRemember() { try { localStorage.removeItem(REMEMBER_KEY); } catch (e) {} }
     var FIXED_CODE = 'cbd';   // รหัสเข้าใช้งานตายตัว (ไม่มีระบบตั้งรหัสผ่านเอง)
     var $ = function (id) { return document.getElementById(id); };
     var screenEl = $('lockScreen');
@@ -1127,6 +1131,7 @@
         });
     }
     function lock(msg) {
+        clearRemember();
         locked = true;
         screenEl.classList.add('show'); document.body.classList.add('lk-open');
         setInert(true);
@@ -1170,7 +1175,7 @@
         var inp = $('lkLoginPw'); busy(forms.login, true);
         checkPw(inp.value).then(function (ok) {
             busy(forms.login, false);
-            if (ok) { try { localStorage.removeItem(FAILKEY); } catch (x) {} unlock(); }
+            if (ok) { try { localStorage.removeItem(FAILKEY); } catch (x) {} setRemember(); unlock(); }
             else { wrong(); inp.value = ''; inp.focus(); }
         });
     });
@@ -1222,9 +1227,13 @@
 
     window.lockApp = function () { if (!locked) lock(); };
     try {
-        locked = true; document.body.classList.add('lk-open');
-        show('login');
-        document.addEventListener('DOMContentLoaded', function () { if (locked) setInert(true); });
+        if (remembered()) {
+            locked = false; screenEl.classList.remove('show'); setRemember();
+        } else {
+            locked = true; document.body.classList.add('lk-open');
+            show('login');
+            document.addEventListener('DOMContentLoaded', function () { if (locked) setInert(true); });
+        }
     } catch (err) { // ถ้าระบบล็อกมีปัญหา อย่าให้เข้าใช้งานไม่ได้
         console.error('lock init failed', err);
         screenEl.classList.remove('show'); document.body.classList.remove('lk-open'); locked = false;
