@@ -4059,7 +4059,7 @@
             return [
                 { id: 'auto',   label: 'ออดอัตโนมัติ',       on: currentProfile !== 'paused', cls: '' },
                 { id: 'exam',   label: 'โหมดวันสอบ',          on: currentProfile === 'exam', cls: 'y' },
-                { id: 'speak',  label: 'พูดแจ้งเตือนหลังออด', on: !!(speakEl && speakEl.checked), cls: '' },
+                { id: 'speak',  label: 'พูดหลังออด', on: !!(speakEl && speakEl.checked), cls: '' },
                 { id: 'mute',   label: 'ปิดเสียงลำโพง',       on: isMuted, cls: 'y' },
                 { id: 'loop',   label: 'เล่นเพลงซ้ำ',          on: isDeckLooping, cls: '' },
                 { id: 'wake',   label: 'กันหน้าจอดับ',         on: wakeLockWanted, cls: 'y' }
