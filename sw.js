@@ -1,7 +1,7 @@
 /* Service Worker - ระบบออดโรงเรียน (ใช้งานออฟไลน์ได้เต็มรูปแบบ)
  * แคชไฟล์ทั้งหมดของแอปไว้ตอนเปิดครั้งแรก แล้วเปิดจากแคชก่อนเสมอ
  * พร้อมอัปเดตเวอร์ชันใหม่เงียบๆ เมื่อมีอินเทอร์เน็ต (เห็นผลเมื่อเปิดหน้าใหม่รอบถัดไป) */
-const VERSION = 'lock-1';
+const VERSION = 'push-1';
 const CACHE = 'school-bell-' + VERSION;
 const PRECACHE = [
   "./",
@@ -77,4 +77,31 @@ self.addEventListener('fetch', (event) => {
       return cached || net;
     })
   );
+});
+
+
+/* ===== แจ้งเตือนมือถือ (push จาก Firebase / Apps Script) ===== */
+self.addEventListener('push', (event) => {
+  let d = {};
+  try { d = event.data ? event.data.json() : {}; } catch (e) { d = { body: event.data ? event.data.text() : '' }; }
+  const x = Object.assign({}, d.notification || {}, d.data || {});
+  event.waitUntil(
+    self.registration.showNotification(x.title || 'ออดโรงเรียน', {
+      body: x.body || '',
+      icon: 'icons/icon-192.png',
+      badge: 'icons/icon-192.png',
+      tag: 'school-bell',
+      renotify: true,
+      vibrate: [200, 100, 200]
+    })
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil((async () => {
+    const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const c of wins) { if ('focus' in c) { await c.focus(); return; } }
+    await self.clients.openWindow('./');
+  })());
 });
