@@ -1711,6 +1711,32 @@
                                     </div>
                                 </div>
                             </details>
+                            <details class="gem-adv mt-3">
+                                <summary><i class="fa-solid fa-mobile-screen-button mr-1.5"></i>แจ้งเตือนบนมือถือ (Firebase)</summary>
+                                <div class="space-y-3 pt-3">
+                                    <div>
+                                        <div class="opt-label mb-1.5"><i class="fa-solid fa-mobile-screen text-slate-400"></i>ใช้บนมือถือ (เครื่องที่ต้องการรับแจ้งเตือน)</div>
+                                        <div class="flex flex-wrap gap-2">
+                                            <button id="pushEnableBtn" type="button" onclick="enablePush()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-violet-50 text-violet-700 border border-violet-200 text-xs font-bold transition cursor-pointer">เปิดแจ้งเตือนบนเครื่องนี้</button>
+                                        </div>
+                                        <p id="pushPhoneStatus" class="text-xs text-slate-400 mt-1.5">iPhone ต้องเพิ่มเว็บลงหน้าจอโฮมก่อน (iOS 16.4 ขึ้นไป)</p>
+                                    </div>
+                                    <div>
+                                        <div class="opt-label mb-1.5"><i class="fa-solid fa-desktop text-slate-400"></i>ใช้บนคอมโรงเรียน (เครื่องที่ตีออด)</div>
+                                        <div class="flex items-center gap-2 bg-white px-3 py-2.5 rounded-xl border border-slate-200">
+                                            <input id="pushKeyInput" type="password" autocomplete="off" placeholder="รหัสแจ้งเตือน (BELL_KEY)" onchange="savePushSettings()" class="w-full text-sm bg-transparent focus:outline-none text-slate-700">
+                                        </div>
+                                        <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px;cursor:pointer">
+                                            <input id="pushSendToggle" type="checkbox" onchange="savePushSettings()" style="width:18px;height:18px">
+                                            ส่งแจ้งเตือนไปมือถือทุกครั้งที่ออดอัตโนมัติดัง
+                                        </label>
+                                        <div class="flex flex-wrap gap-2" style="margin-top:10px">
+                                            <button type="button" onclick="testPush()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-violet-50 text-violet-700 border border-violet-200 text-xs font-bold transition cursor-pointer">ส่งทดสอบ</button>
+                                        </div>
+                                        <p class="text-xs text-slate-400 mt-1.5">เปิดสวิตช์นี้เฉพาะบนคอมที่ตีออดเท่านั้น (มือถือไม่ต้องเปิด)</p>
+                                    </div>
+                                </div>
+                            </details>
                         </div>
                             </div>
                         </details>
@@ -3787,6 +3813,7 @@
                     lastTriggeredMinuteKey = currentHM;
                     addActivityLog(`⏰ ตีออดอัตโนมัติตามตารางเวลา ${matchedItem.time} น. (${matchedItem.title})`);
                     playBell(matchedItem.type, matchedItem.tts || null);
+                    sendPush('🔔 ' + matchedItem.title, matchedItem.time + ' น. ' + getBellDisplayName(matchedItem.type));
                 }
             }
 
@@ -4320,8 +4347,92 @@
             }
         }
 
+
+        /**************************************************************
+         * 13. แจ้งเตือนมือถือ (Firebase Cloud Messaging ผ่าน Apps Script)
+         **************************************************************/
+        const FB_CONFIG = {
+            apiKey: "AIzaSyCJCAmTi4lCHfR42pk3Axcb0bH58TUK99w",
+            authDomain: "school-bell-e6163.firebaseapp.com",
+            projectId: "school-bell-e6163",
+            storageBucket: "school-bell-e6163.firebasestorage.app",
+            messagingSenderId: "233399325118",
+            appId: "1:233399325118:web:7c50f8c84e123dfb7529ef"
+        };
+        const VAPID_KEY = "BFaFmflzzUW2hvV2mvPu7CEcA0uz94zo_Bl-fK1EE81EWNkaCcMiHwTRlzcTBbSR2Kazg7hhpUoP4-XDER1KQX4";
+        const PUSH_API_URL = "https://script.google.com/macros/s/AKfycbxIIp1NEe1GrPiaFFpUSJEI6DC3LUMws9BDN6PJIDmLhBIMPSmUY6hGqo318fj7GzovYQ/exec";
+        const PUSH_KEY_LS = 'nongbuadaeng_push_key', PUSH_SEND_LS = 'nongbuadaeng_push_send';
+
+        function pushApi(payload) {
+            return fetch(PUSH_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // ห้ามใช้ application/json (Apps Script ไม่รองรับ preflight)
+                body: JSON.stringify(payload)
+            }).then(r => r.json());
+        }
+        function getPushKey() { try { return localStorage.getItem(PUSH_KEY_LS) || ''; } catch (e) { return ''; } }
+        function loadPushSettings() {
+            const k = document.getElementById('pushKeyInput'), t = document.getElementById('pushSendToggle');
+            if (k) k.value = getPushKey();
+            if (t) { try { t.checked = localStorage.getItem(PUSH_SEND_LS) === '1'; } catch (e) {} }
+        }
+        function savePushSettings() {
+            const k = document.getElementById('pushKeyInput'), t = document.getElementById('pushSendToggle');
+            try {
+                if (k) localStorage.setItem(PUSH_KEY_LS, k.value.trim());
+                if (t) localStorage.setItem(PUSH_SEND_LS, t.checked ? '1' : '0');
+            } catch (e) {}
+        }
+        // ส่งแจ้งเตือน (ไม่มีเน็ตหรือผิดพลาด = ข้ามไป ไม่กระทบเสียงออดในห้อง)
+        async function sendPush(title, body, force) {
+            try {
+                if (!force && localStorage.getItem(PUSH_SEND_LS) !== '1') return null;
+                const key = getPushKey();
+                if (!key || !navigator.onLine) return null;
+                return await pushApi({ action: 'notify', key, title, body });
+            } catch (e) { console.warn('sendPush failed', e); return null; }
+        }
+        async function testPush() {
+            savePushSettings();
+            if (!getPushKey()) { showToast('ใส่รหัสแจ้งเตือน (BELL_KEY) ก่อน', 'info'); return; }
+            const j = await sendPush('🔔 ทดสอบ', 'ข้อความทดสอบจากระบบออด ' + new Date().toLocaleTimeString('th-TH'), true);
+            if (!j) showToast('ส่งไม่สำเร็จ (ตรวจอินเทอร์เน็ต)', 'info');
+            else if (!j.ok) showToast('รหัสไม่ถูกต้อง หรือเกิดข้อผิดพลาด: ' + (j.error || ''), 'info');
+            else showToast('ส่งแล้ว ' + (j.sent || 0) + '/' + (j.total || 0) + ' เครื่อง', 'success');
+        }
+        async function enablePush() {
+            const st = document.getElementById('pushPhoneStatus');
+            const say = t => { if (st) st.textContent = t; };
+            try {
+                if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+                    say('เครื่องนี้ไม่รองรับ (iPhone ต้องเพิ่มลงหน้าจอโฮมก่อน แล้วเปิดจากไอคอน)'); return;
+                }
+                const perm = await Notification.requestPermission();
+                if (perm !== 'granted') { say('ยังไม่ได้อนุญาตการแจ้งเตือน'); return; }
+                let key = getPushKey();
+                if (!key) {
+                    key = (prompt('ใส่รหัสแจ้งเตือน (BELL_KEY)') || '').trim();
+                    if (!key) { say('ยกเลิก (ยังไม่ได้ใส่รหัส)'); return; }
+                }
+                say('กำลังเชื่อมต่อ...');
+                const V = '10.14.1';
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-app.js');
+                const { getMessaging, getToken } = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-messaging.js');
+                const app = initializeApp(FB_CONFIG);
+                const reg = await navigator.serviceWorker.ready;
+                const token = await getToken(getMessaging(app), { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+                if (!token) { say('ขอ token ไม่สำเร็จ'); return; }
+                const j = await pushApi({ action: 'subscribe', key, token });
+                if (j && j.ok) {
+                    try { localStorage.setItem(PUSH_KEY_LS, key); } catch (e) {}
+                    say('เปิดแจ้งเตือนเรียบร้อย ✅ (มือถือที่สมัครไว้ ' + j.count + ' เครื่อง)');
+                } else say('รหัสไม่ถูกต้อง หรือเกิดข้อผิดพลาด: ' + ((j && j.error) || ''));
+            } catch (e) { say('ผิดพลาด: ' + e.message); }
+        }
+
         window.onload = function () {
             loadGeminiSettings();
+            loadPushSettings();
             const pat = document.getElementById('paTextInput');
             const cc = () => { const c = document.getElementById('paCharCount'); if (c && pat) c.innerText = pat.value.length + ' ตัวอักษร'; };
             if (pat) { pat.addEventListener('input', cc); cc(); }
