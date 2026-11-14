@@ -1156,8 +1156,10 @@
             [data-tab="remote"] .pa-chips button { height:30px; padding:0 11px; }
             [data-tab="remote"] .pa-chips .pa-chip-clear { margin-left:auto; }
             [data-tab="remote"] .pa-send { height:44px; font-size:15px; }
-            .rm-chimes { grid-template-columns:1fr 1fr; }
-            .rm-chimes button { flex-direction:row; gap:8px; min-height:42px; }
+            .rm-chimes { grid-template-columns:repeat(4,1fr); gap:8px; }
+            .rm-chimes button { min-height:48px; padding:0; }
+            .rm-chimes button i { font-size:19px; }
+            .rm-chimes button span { display:none; }
         }
             /* ===== การ์ดรับคำสั่ง (โหมดคอมโรงเรียน) ===== */
         .rmx-card { background:linear-gradient(135deg,#F8F5FF 0%,#FFF7EE 100%); border:1.5px solid #E6DFFB; border-radius:22px; padding:18px; }
@@ -2070,10 +2072,10 @@
                             <div class="opt-card rm-chime">
                                 <div class="opt-label"><i class="fa-solid fa-bell text-orange-500"></i>เสียงนำก่อนประกาศ</div>
                                 <div class="rm-chimes" id="rmChimeBtns" role="radiogroup" aria-label="เสียงนำก่อนประกาศ">
-                                    <button type="button" class="on" data-chime="pre_pa" role="radio" aria-checked="true" onclick="rmPickChime('pre_pa')"><i class="fa-solid fa-bell"></i><span>ติ๊งต่อง</span></button>
-                                    <button type="button" data-chime="chime_soft" role="radio" aria-checked="false" onclick="rmPickChime('chime_soft')"><i class="fa-solid fa-wind"></i><span>ระฆังนุ่ม</span></button>
-                                    <button type="button" data-chime="none" role="radio" aria-checked="false" onclick="rmPickChime('none')"><i class="fa-solid fa-volume-xmark"></i><span>ไม่มี</span></button>
-                                    <button type="button" data-chime="lib" role="radio" aria-checked="false" onclick="rmPickChime('lib')"><i class="fa-solid fa-desktop"></i><span>เสียงในคอม</span></button>
+                                    <button type="button" class="on" data-chime="pre_pa" title="ติ๊งต่อง" aria-label="ติ๊งต่อง" role="radio" aria-checked="true" onclick="rmPickChime('pre_pa')"><i class="fa-solid fa-bell"></i><span>ติ๊งต่อง</span></button>
+                                    <button type="button" data-chime="chime_soft" title="ระฆังนุ่ม" aria-label="ระฆังนุ่ม" role="radio" aria-checked="false" onclick="rmPickChime('chime_soft')"><i class="fa-solid fa-wind"></i><span>ระฆังนุ่ม</span></button>
+                                    <button type="button" data-chime="none" title="ไม่มีเสียงนำ" aria-label="ไม่มีเสียงนำ" role="radio" aria-checked="false" onclick="rmPickChime('none')"><i class="fa-solid fa-volume-xmark"></i><span>ไม่มี</span></button>
+                                    <button type="button" data-chime="lib" title="เสียงในคอม" aria-label="เสียงในคอม" role="radio" aria-checked="false" onclick="rmPickChime('lib')"><i class="fa-solid fa-desktop"></i><span>เสียงในคอม</span></button>
                                 </div>
                                 <div id="rmChimeLib" class="rm-chime-lib hidden"></div>
                             </div>
