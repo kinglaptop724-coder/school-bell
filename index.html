@@ -1056,14 +1056,14 @@
         }
     </style>
     <style id="remote-ui">
-        .rm-roles { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; }
-        .rm-role { display:flex; align-items:center; gap:12px; padding:12px 14px; border:1.5px solid #E6E2F8; border-radius:18px; background:#fff; text-align:left; cursor:pointer; color:#4A4560; transition:border-color .15s, background-color .15s, box-shadow .15s; }
-        .rm-role > i { width:40px; height:40px; border-radius:13px; background:#F1EDFF; color:#7655E8; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
-        .rm-role > span { display:flex; flex-direction:column; min-width:0; line-height:1.35; }
-        .rm-role b { font-size:15px; color:#2E2A4A; }
-        .rm-role small { font-size:12px; color:#8A86A8; }
+        .rm-roles { display:flex; gap:6px; margin-left:auto; flex-shrink:0; }
+        .rm-role { display:flex; align-items:center; gap:8px; padding:5px 12px 5px 5px; border:1.5px solid #E6E2F8; border-radius:14px; background:#fff; cursor:pointer; color:#4A4560; transition:border-color .15s, background-color .15s, box-shadow .15s; }
+        .rm-role > i { width:30px; height:30px; border-radius:10px; background:#F1EDFF; color:#7655E8; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+        .rm-role b { font-size:14px; color:#2E2A4A; line-height:1; }
         .rm-role.on { border-color:#7655E8; background:#F5F2FF; box-shadow:0 0 0 3px rgba(118,85,232,.14); }
         .rm-role.on > i { background:#7655E8; color:#fff; }
+        .rm-head { flex-wrap:wrap; }
+        .rm-head .pa-head-text { flex:1 1 240px; }
         .rm-status { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:16px; background:#FAF9FF; border:1.5px solid #ECE8FA; font-size:14px; font-weight:600; color:#4A4560; line-height:1.5; }
         .rm-status .rm-dot { width:10px; height:10px; border-radius:50%; background:#C9C6D6; flex-shrink:0; }
         .rm-status.on { background:#F0FDF4; border-color:#BBF7D0; color:#15803D; }
@@ -1086,7 +1086,8 @@
         .rm-note { font-size:12.5px; color:#8A86A8; line-height:1.6; margin-top:10px; }
         .rm-last { font-size:13px; color:#6B6785; margin-top:10px; line-height:1.6; }
         @media (max-width:640px) {
-            .rm-roles { grid-template-columns:1fr; }
+            .rm-roles { margin-left:0; width:100%; }
+            .rm-role { flex:1; justify-content:center; padding:6px 12px 6px 6px; }
             .rm-bells { grid-template-columns:1fr 1fr; }
             .rm-bell { height:60px; font-size:13.5px; padding:0 10px; }
         }
@@ -1955,23 +1956,20 @@
 
                 <!-- SECTION 4.5: REMOTE (มือถือสั่งงาน -> คอมโรงเรียนรับคำสั่ง) -->
                 <section data-tab="remote" class="tab-panel clean-card rounded-3xl p-5 sm:p-6">
-                    <div class="pa-head">
+                    <div class="pa-head rm-head">
                         <div class="pa-head-ico"><i class="fa-solid fa-tower-broadcast"></i></div>
                         <div class="pa-head-text">
                             <h2 class="pa-head-title">รีโมตสั่งงานลำโพงโรงเรียน</h2>
                             <p class="pa-head-sub">สั่งตีออด เปิดไฟล์เสียง หรือพิมพ์ข้อความให้คอมโรงเรียนพูด จากมือถือ</p>
                         </div>
-                    </div>
-
-                    <div class="rm-roles">
-                        <button type="button" id="rmRole_phone" onclick="setRemoteRole('phone')" class="rm-role" aria-pressed="false">
-                            <i class="fa-solid fa-mobile-screen"></i>
-                            <span><b>เครื่องนี้คือมือถือ</b><small>ใช้สั่งงานจากระยะไกล</small></span>
-                        </button>
-                        <button type="button" id="rmRole_pc" onclick="setRemoteRole('pc')" class="rm-role" aria-pressed="false">
-                            <i class="fa-solid fa-desktop"></i>
-                            <span><b>เครื่องนี้คือคอมโรงเรียน</b><small>เครื่องที่ต่อกับลำโพงเสียงตามสาย</small></span>
-                        </button>
+                        <div class="rm-roles" role="group" aria-label="เลือกประเภทเครื่องนี้">
+                            <button type="button" id="rmRole_phone" onclick="setRemoteRole('phone')" class="rm-role" aria-pressed="false" title="เครื่องนี้คือมือถือ (ใช้สั่งงานจากระยะไกล)">
+                                <i class="fa-solid fa-mobile-screen"></i><b>มือถือ</b>
+                            </button>
+                            <button type="button" id="rmRole_pc" onclick="setRemoteRole('pc')" class="rm-role" aria-pressed="false" title="เครื่องนี้คือคอมโรงเรียน (เครื่องที่ต่อกับลำโพงเสียงตามสาย)">
+                                <i class="fa-solid fa-desktop"></i><b>คอม</b>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- ===== โหมดมือถือ: ผู้สั่ง ===== -->
