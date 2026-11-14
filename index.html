@@ -1052,6 +1052,42 @@
             .lock-pill span { display:none; }
         }
     </style>
+    <style id="remote-ui">
+        .rm-roles { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px; }
+        .rm-role { display:flex; align-items:center; gap:12px; padding:12px 14px; border:1.5px solid #E6E2F8; border-radius:18px; background:#fff; text-align:left; cursor:pointer; color:#4A4560; transition:border-color .15s, background-color .15s, box-shadow .15s; }
+        .rm-role > i { width:40px; height:40px; border-radius:13px; background:#F1EDFF; color:#7655E8; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+        .rm-role > span { display:flex; flex-direction:column; min-width:0; line-height:1.35; }
+        .rm-role b { font-size:15px; color:#2E2A4A; }
+        .rm-role small { font-size:12px; color:#8A86A8; }
+        .rm-role.on { border-color:#7655E8; background:#F5F2FF; box-shadow:0 0 0 3px rgba(118,85,232,.14); }
+        .rm-role.on > i { background:#7655E8; color:#fff; }
+        .rm-status { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:16px; background:#FAF9FF; border:1.5px solid #ECE8FA; font-size:14px; font-weight:600; color:#4A4560; line-height:1.5; }
+        .rm-status .rm-dot { width:10px; height:10px; border-radius:50%; background:#C9C6D6; flex-shrink:0; }
+        .rm-status.on { background:#F0FDF4; border-color:#BBF7D0; color:#15803D; }
+        .rm-status.on .rm-dot { background:#16A34A; box-shadow:0 0 0 4px #DCFCE7; }
+        .rm-status.off { background:#FFF7ED; border-color:#FDD9B0; color:#C2410C; }
+        .rm-status.off .rm-dot { background:#F97316; }
+        .rm-gap { margin-bottom:22px; }
+        .rm-bells { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:10px; }
+        .rm-bell { display:flex; align-items:center; gap:10px; height:56px; padding:0 14px; border-radius:16px; border:1.5px solid #D6CCFC; background:#fff; color:#4E33A3; font-size:14px; font-weight:700; cursor:pointer; text-align:left; }
+        .rm-bell i { color:#F97316; font-size:16px; width:20px; text-align:center; }
+        .rm-bell:hover { background:#F5F2FF; border-color:#A28AF8; }
+        .rm-stop { width:100%; height:56px; border:0; border-radius:18px; background:#E11D48; color:#fff; font-size:17px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; box-shadow:0 10px 22px -10px rgba(225,29,72,.7); }
+        .rm-stop:hover { background:#BE123C; }
+        .rm-lib { display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; padding-right:2px; }
+        .rm-lib-row { display:flex; align-items:center; gap:12px; padding:10px 12px; border:1.5px solid #ECE8FA; border-radius:16px; background:#fff; }
+        .rm-lib-name { flex:1; min-width:0; font-size:14px; font-weight:600; color:#2E2A4A; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-block:.14em; }
+        .rm-lib-play { width:42px; height:42px; border-radius:50%; border:0; background:#F1EDFF; color:#7655E8; display:flex; align-items:center; justify-content:center; font-size:14px; cursor:pointer; flex-shrink:0; }
+        .rm-lib-play:hover { background:#7655E8; color:#fff; }
+        .rm-lib-empty { text-align:center; padding:18px 12px; border:2px dashed #E6DFFB; border-radius:16px; color:#8A86A6; font-size:13px; line-height:1.6; }
+        .rm-note { font-size:12.5px; color:#8A86A8; line-height:1.6; margin-top:10px; }
+        .rm-last { font-size:13px; color:#6B6785; margin-top:10px; line-height:1.6; }
+        @media (max-width:640px) {
+            .rm-roles { grid-template-columns:1fr; }
+            .rm-bells { grid-template-columns:1fr 1fr; }
+            .rm-bell { height:60px; font-size:13.5px; padding:0 10px; }
+        }
+    </style>
     </head>
 <body class="selection:bg-violet-200 selection:text-slate-900">
 <!-- ===== LOCK SCREEN (ถามรหัสผ่านก่อนเข้าระบบ) ===== -->
@@ -1329,6 +1365,7 @@
             <button data-tabbtn="pa" onclick="switchMainTab('pa')" class="main-tab"><i class="fa-solid fa-microphone-lines"></i><span>ประกาศเสียง</span></button>
             <button data-tabbtn="library" onclick="switchMainTab('library')" class="main-tab"><i class="fa-solid fa-compact-disc"></i><span>คลังเสียง</span><em id="tabCount_library" class="tab-count">0</em></button>
             <button data-tabbtn="schedule" onclick="switchMainTab('schedule')" class="main-tab"><i class="fa-solid fa-calendar-days"></i><span>ตารางเวลา</span></button>
+            <button data-tabbtn="remote" onclick="switchMainTab('remote')" class="main-tab"><i class="fa-solid fa-tower-broadcast"></i><span>รีโมต</span></button>
         </nav>
 
         <div class="header-actions">
@@ -1844,6 +1881,83 @@
                         <div class="sch-foot-actions flex flex-wrap gap-2">
                             <button onclick="askConfirm({ title: 'คืนค่าตารางเวลาเริ่มต้น?', text: 'รายการที่แก้ไขไว้จะหายไป และกลับเป็นตารางมาตรฐาน', okText: 'คืนค่าเริ่มต้น', tone: 'warn', icon: 'fa-rotate-left' }).then(ok => { if (ok) resetDefaultSchedule(); })" class="btn-ghost cursor-pointer"><i class="fa-solid fa-rotate-left"></i>คืนค่าตารางเริ่มต้น</button>
                             <button onclick="exportScheduleJSON()" class="btn-ghost cursor-pointer"><i class="fa-solid fa-download"></i>สำรองตาราง</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 4.5: REMOTE (มือถือสั่งงาน -> คอมโรงเรียนรับคำสั่ง) -->
+                <section data-tab="remote" class="tab-panel clean-card rounded-3xl p-5 sm:p-6">
+                    <div class="pa-head">
+                        <div class="pa-head-ico"><i class="fa-solid fa-tower-broadcast"></i></div>
+                        <div class="pa-head-text">
+                            <h2 class="pa-head-title">รีโมตสั่งงานลำโพงโรงเรียน</h2>
+                            <p class="pa-head-sub">สั่งตีออด เปิดไฟล์เสียง หรือพิมพ์ข้อความให้คอมโรงเรียนพูด จากมือถือ</p>
+                        </div>
+                    </div>
+
+                    <div class="rm-roles">
+                        <button type="button" id="rmRole_phone" onclick="setRemoteRole('phone')" class="rm-role" aria-pressed="false">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                            <span><b>เครื่องนี้คือมือถือ</b><small>ใช้สั่งงานจากระยะไกล</small></span>
+                        </button>
+                        <button type="button" id="rmRole_pc" onclick="setRemoteRole('pc')" class="rm-role" aria-pressed="false">
+                            <i class="fa-solid fa-desktop"></i>
+                            <span><b>เครื่องนี้คือคอมโรงเรียน</b><small>เครื่องที่ต่อกับลำโพงเสียงตามสาย</small></span>
+                        </button>
+                    </div>
+
+                    <!-- ===== โหมดมือถือ: ผู้สั่ง ===== -->
+                    <div id="rmPhonePanel" class="hidden">
+                        <div id="rmPhoneStatus" class="rm-status rm-gap"><span class="rm-dot"></span><span id="rmPhoneStatusText">กำลังตรวจสอบสถานะคอมโรงเรียน...</span></div>
+
+                        <div class="sec-title mb-2.5"><i class="fa-solid fa-bell"></i>ตีออดทันที</div>
+                        <div class="rm-bells rm-gap">
+                            <button type="button" class="rm-bell" onclick="remoteBell('flag_lineup')"><i class="fa-solid fa-flag"></i>เข้าแถว / ธงชาติ</button>
+                            <button type="button" class="rm-bell" onclick="remoteBell('class_change')"><i class="fa-solid fa-arrows-rotate"></i>เปลี่ยนคาบ</button>
+                            <button type="button" class="rm-bell" onclick="remoteBell('lunch_break')"><i class="fa-solid fa-utensils"></i>พักกลางวัน</button>
+                            <button type="button" class="rm-bell" onclick="remoteBell('end_lunch')"><i class="fa-solid fa-book-open"></i>เข้าเรียนบ่าย</button>
+                            <button type="button" class="rm-bell" onclick="remoteBell('dismissal')"><i class="fa-solid fa-house"></i>เลิกเรียน</button>
+                        </div>
+
+                        <div class="sec-title mb-2.5"><i class="fa-solid fa-comment-dots"></i>พิมพ์ข้อความให้คอมโรงเรียนพูด</div>
+                        <div class="rm-gap">
+                            <textarea id="rmText" rows="3" maxlength="300" placeholder="เช่น ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ" class="pa-textarea w-full rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-sky-500 focus:outline-none p-4 text-sm text-slate-800 placeholder-slate-400 leading-relaxed transition"></textarea>
+                            <div class="opt-card" style="margin-top:10px">
+                                <div class="opt-label"><i class="fa-solid fa-bell text-orange-500"></i>เสียงนำก่อนพูด</div>
+                                <select id="rmChime" class="w-full bg-transparent text-sm font-semibold text-slate-800 focus:outline-none cursor-pointer mt-1.5">
+                                    <option value="pre_pa">ติ๊งต่อง 4 โน้ต</option>
+                                    <option value="chime_soft">ระฆังนุ่มนวล</option>
+                                    <option value="none">ไม่มีเสียงนำ (พูดทันที)</option>
+                                </select>
+                            </div>
+                            <button type="button" onclick="remoteTts()" class="pa-send" style="margin-top:12px"><i class="fa-solid fa-paper-plane"></i><span>ส่งไปให้คอมโรงเรียนพูด</span></button>
+                            <p class="rm-note">ข้อความยาวได้ไม่เกิน 300 ตัวอักษร · ถ้าเปิดเสียง Gemini ไว้บนคอมโรงเรียน คอมจะใช้เสียงนั้นพูด</p>
+                        </div>
+
+                        <div class="sec-title mb-2.5"><i class="fa-solid fa-compact-disc"></i>เปิดไฟล์เสียงในคลังของคอมโรงเรียน</div>
+                        <div id="rmLibList" class="rm-lib rm-gap"><div class="rm-lib-empty">ยังไม่มีรายการ รอคอมโรงเรียนเชื่อมต่อ</div></div>
+
+                        <button type="button" class="rm-stop" onclick="remoteStop()"><i class="fa-solid fa-stop"></i>หยุดเสียงที่คอมโรงเรียนทันที</button>
+                    </div>
+
+                    <!-- ===== โหมดคอมโรงเรียน: ผู้รับคำสั่ง ===== -->
+                    <div id="rmPcPanel" class="hidden">
+                        <div class="gem-card">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-start gap-3 min-w-0">
+                                    <div class="gem-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+                                    <div class="min-w-0">
+                                        <div class="text-sm font-bold text-slate-800">รับคำสั่งจากมือถือ</div>
+                                        <div class="text-xs text-slate-500 leading-snug">เปิดบนคอมที่ต่อลำโพงเท่านั้น ระบบจะถามหาคำสั่งใหม่ทุก 4 วินาที แล้วเล่นเสียงออกลำโพงให้เอง</div>
+                                    </div>
+                                </div>
+                                <label class="shrink-0 flex items-center gap-2 cursor-pointer select-none pt-0.5" title="เปิด/ปิดการรับคำสั่ง">
+                                    <input id="rmRxToggle" type="checkbox" onchange="toggleRemoteRx()" class="tg">
+                                </label>
+                            </div>
+                            <div id="rmRxStatus" class="rm-status" style="margin-top:14px"><span class="rm-dot"></span><span id="rmRxStatusText">ปิดอยู่</span></div>
+                            <div id="rmRxLast" class="rm-last">ยังไม่มีคำสั่งจากมือถือ</div>
+                            <p class="rm-note">ต้องเปิดหน้านี้ค้างไว้ ตั้งคอมไม่ให้ Sleep และอย่าย่อหน้าต่างไว้นานๆ (เบราว์เซอร์อาจชะลอการทำงานของแท็บที่ถูกซ่อน) · รหัสที่ใช้คือ "รหัสแจ้งเตือน" เดียวกับที่ตั้งไว้ในหน้าประกาศเสียง → แจ้งเตือนบนมือถือ ต้องตรงกันทั้งสองเครื่อง</p>
                         </div>
                     </div>
                 </section>
@@ -4506,7 +4620,7 @@
             }
         });
 
-        const MAIN_TABS = ['home', 'bell', 'pa', 'library', 'schedule'];
+        const MAIN_TABS = ['home', 'bell', 'pa', 'library', 'schedule', 'remote'];
         function switchMainTab(name) {
             if (!MAIN_TABS.includes(name)) name = 'home';
             document.querySelectorAll('.tab-panel').forEach(el => el.classList.toggle('active', el.dataset.tab === name));
@@ -4517,6 +4631,7 @@
                 if (on) el.scrollIntoView({ block: 'nearest', inline: 'center' });
             });
             try { localStorage.setItem('nongbuadaeng_active_tab', name); } catch (e) {}
+            if (name === 'remote' && typeof rmOnShow === 'function') rmOnShow();
         }
 
         document.addEventListener('keydown', (e) => {
@@ -4686,9 +4801,276 @@
             maybeShowInstallBar(); // มือถือทุกเครื่องเห็นแถบติดตั้งหลังเข้าสู่ระบบ (Android ถ้าเบราว์เซอร์ยังไม่พร้อมจะแสดงขั้นตอนติดตั้งด้วยมือ)
         });
 
+        /**************************************************************
+         * 15. รีโมตสั่งงานลำโพงจากมือถือ (Apps Script: cmd_send / cmd_poll / cmd_status)
+         *   มือถือ --cmd_send--> Apps Script (คิวคำสั่ง) <--cmd_poll-- คอมโรงเรียน (เล่นเสียงเอง)
+         **************************************************************/
+        const RM_ROLE_LS = 'nongbuadaeng_remote_role', RM_RX_LS = 'nongbuadaeng_remote_rx';
+        const RM_POLL_MS = 4000, RM_FAIL_POLL_MS = 8000, RM_STATUS_MS = 5000;
+        let rmRole = 'phone', rmRxOn = false, rmSince = null, rmPollTimer = null, rmPolling = false;
+        let rmFail = 0, rmLibSig = '', rmStatusTimer = null, rmLastLibList = [];
+
+        // id ในคลังเสียงของคอมอาจยาวเกิน 60 ตัวอักษรที่ Apps Script รับ จึงใช้รหัสย่อแทน
+        function rmShortId(id) {
+            let h = 5381;
+            for (let k = 0; k < id.length; k++) h = ((h * 33) ^ id.charCodeAt(k)) >>> 0;
+            return 'r' + h.toString(36) + id.length.toString(36);
+        }
+        function rmTabActive() {
+            const el = document.querySelector('[data-tab="remote"]');
+            return !!(el && el.classList.contains('active'));
+        }
+        function rmErrText(j) {
+            const e = j && j.error;
+            if (e === 'forbidden') return 'รหัสแจ้งเตือนไม่ถูกต้อง (ต้องตรงกับ BELL_KEY ใน Apps Script)';
+            if (e === 'too fast') return 'กดถี่เกินไป รอสักครู่แล้วกดใหม่';
+            if (e === 'bad data' || e === 'bad type') return 'รูปแบบคำสั่งไม่ถูกต้อง';
+            return e ? ('ผิดพลาด: ' + e) : 'ส่งไม่สำเร็จ';
+        }
+
+        function remoteInit() {
+            try {
+                const r = localStorage.getItem(RM_ROLE_LS);
+                rmRole = (r === 'pc' || r === 'phone') ? r : (IS_MOBILE ? 'phone' : 'pc');
+                rmRxOn = localStorage.getItem(RM_RX_LS) === '1';
+            } catch (e) { rmRole = IS_MOBILE ? 'phone' : 'pc'; }
+            rmRender();
+            if (rmRole === 'pc' && rmRxOn) startRemoteRx();
+            rmStatusTimer = setInterval(() => {
+                if (rmRole === 'phone' && document.visibilityState === 'visible' && rmTabActive()) rmRefreshStatus();
+            }, RM_STATUS_MS);
+        }
+        function rmOnShow() { if (rmRole === 'phone') rmRefreshStatus(); }
+
+        function rmRender() {
+            ['phone', 'pc'].forEach(r => {
+                const b = $id('rmRole_' + r);
+                if (b) { b.classList.toggle('on', rmRole === r); b.setAttribute('aria-pressed', String(rmRole === r)); }
+            });
+            const pp = $id('rmPhonePanel'), pc = $id('rmPcPanel');
+            if (pp) pp.classList.toggle('hidden', rmRole !== 'phone');
+            if (pc) pc.classList.toggle('hidden', rmRole !== 'pc');
+            const t = $id('rmRxToggle'); if (t) t.checked = rmRxOn;
+        }
+
+        function setRemoteRole(role) {
+            if (role !== 'phone' && role !== 'pc') return;
+            rmRole = role;
+            try { localStorage.setItem(RM_ROLE_LS, role); } catch (e) {}
+            if (role === 'pc') { if (rmRxOn) startRemoteRx(); }
+            else stopRemoteRx();
+            rmRender();
+            if (role === 'phone') rmRefreshStatus();
+        }
+
+        /* ---------- ฝั่งคอมโรงเรียน: ถามหาคำสั่งใหม่ ---------- */
+        function rmSetRxStatus(state, text) {
+            const box = $id('rmRxStatus'), t = $id('rmRxStatusText');
+            if (box) box.className = 'rm-status' + (state === 'on' ? ' on' : (state === 'off' ? ' off' : ''));
+            if (t) t.innerText = text;
+        }
+        function toggleRemoteRx() {
+            const t = $id('rmRxToggle');
+            rmRxOn = !!(t && t.checked);
+            try { localStorage.setItem(RM_RX_LS, rmRxOn ? '1' : '0'); } catch (e) {}
+            if (rmRxOn) {
+                if (!getPushKey()) { showToast('ใส่รหัสแจ้งเตือนก่อน (หน้าประกาศเสียง → แจ้งเตือนบนมือถือ)', 'warn'); }
+                startRemoteRx();
+                notifyOk('เปิดรับคำสั่งจากมือถือบนคอมเครื่องนี้');
+            } else {
+                stopRemoteRx();
+                notifyInfo('ปิดรับคำสั่งจากมือถือ');
+            }
+        }
+        function startRemoteRx() {
+            clearTimeout(rmPollTimer);
+            rmSince = null; rmFail = 0;
+            rmSetRxStatus('', 'กำลังเชื่อมต่อ...');
+            rmTick();
+        }
+        function stopRemoteRx() {
+            clearTimeout(rmPollTimer); rmPollTimer = null;
+            rmSetRxStatus('', 'ปิดอยู่');
+        }
+        async function rmTick() {
+            clearTimeout(rmPollTimer);
+            if (!rmRxOn || rmRole !== 'pc') return;
+            if (!rmPolling) {
+                rmPolling = true;
+                try {
+                    const key = getPushKey();
+                    if (!key) throw new Error('ยังไม่ได้ใส่รหัสแจ้งเตือน');
+                    if (!navigator.onLine) throw new Error('ไม่มีอินเทอร์เน็ต');
+                    const payload = { action: 'cmd_poll', key };
+                    if (rmSince !== null) { payload.since = rmSince; payload.ack = rmSince; }
+                    const lib = libraryAudioFiles.map(f => ({ id: rmShortId(f.id), name: f.fileName }));
+                    const sig = lib.map(x => x.id).join('|');
+                    if (sig !== rmLibSig) payload.lib = lib;
+                    const j = await pushApi(payload);
+                    if (!j || !j.ok) throw new Error(j && j.error === 'forbidden' ? 'รหัสแจ้งเตือนไม่ถูกต้อง' : ((j && j.error) || 'ตอบกลับไม่ถูกต้อง'));
+                    rmLibSig = sig;
+                    rmFail = 0;
+                    if (rmRxOn && rmRole === 'pc') {
+                        if (rmSince === null || j.seq < rmSince) {
+                            rmSince = j.seq; // ครั้งแรก/คิวถูกรีเซ็ต: ข้ามคำสั่งค้างเก่า
+                        } else {
+                            const cmds = (j.cmds || []).filter(c => c.seq > rmSince).sort((a, b) => a.seq - b.seq);
+                            rmSince = Math.max(rmSince, j.seq);
+                            cmds.forEach(rmExecute);
+                        }
+                        const d = new Date();
+                        rmSetRxStatus('on', `ออนไลน์ · รอรับคำสั่งจากมือถือ (ตรวจล่าสุด ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())})`);
+                    }
+                } catch (err) {
+                    rmFail++;
+                    rmSetRxStatus('off', 'เชื่อมต่อไม่ได้: ' + (err && err.message ? err.message : err) + ' (จะลองใหม่อัตโนมัติ)');
+                } finally {
+                    rmPolling = false;
+                }
+            }
+            if (rmRxOn && rmRole === 'pc') rmPollTimer = setTimeout(rmTick, rmFail ? RM_FAIL_POLL_MS : RM_POLL_MS);
+        }
+        function rmSetLast(text) {
+            const el = $id('rmRxLast'); if (!el) return;
+            const d = new Date();
+            el.innerText = `คำสั่งล่าสุด ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())} น. — ${text}`;
+        }
+        function rmExecute(c) {
+            const d = c.data || {};
+            try {
+                if (c.type === 'stop') {
+                    stopAllAudio(false);
+                    addActivityLog('📱 สั่งจากมือถือ: หยุดเสียงทั้งหมด');
+                    rmSetLast('หยุดเสียงทั้งหมด');
+                } else if (c.type === 'bell') {
+                    rmSetLast('ตีออด ' + getBellDisplayName(d.bell));
+                    addActivityLog('📱 สั่งจากมือถือ: ตีออด ' + getBellDisplayName(d.bell));
+                    triggerManualBell(d.bell);
+                } else if (c.type === 'tts') {
+                    const text = String(d.text || '').trim();
+                    if (!text) return;
+                    rmSetLast('ประกาศข้อความ "' + text + '"');
+                    addActivityLog('📱 สั่งจากมือถือ: ประกาศ "' + text + '"');
+                    if (d.chime === 'none') speakThaiText(text);
+                    else playBell(d.chime === 'chime_soft' ? 'chime_soft' : 'pre_pa', text);
+                } else if (c.type === 'lib') {
+                    const f = libraryAudioFiles.find(x => rmShortId(x.id) === d.id);
+                    if (!f) {
+                        rmSetLast('ไม่พบไฟล์เสียงในคลังของคอมเครื่องนี้');
+                        notifyWarn('มือถือสั่งเปิดไฟล์เสียง แต่ไม่พบไฟล์ในคลังของคอมเครื่องนี้ (ลองรีเฟรชโฟลเดอร์เสียง)');
+                        return;
+                    }
+                    rmSetLast('เปิดไฟล์เสียง ' + f.fileName);
+                    addActivityLog('📱 สั่งจากมือถือ: เปิดไฟล์ ' + f.fileName);
+                    playLibraryFileById(f.id);
+                }
+                if (isMuted && c.type !== 'stop') showToast('คอมโรงเรียนปิดเสียงลำโพงอยู่ จึงไม่มีเสียงออก', 'warn');
+            } catch (err) {
+                console.warn('rmExecute', err);
+                notifyWarn('ทำคำสั่งจากมือถือไม่สำเร็จ: ' + (err && err.message ? err.message : err));
+            }
+        }
+
+        /* ---------- ฝั่งมือถือ: ส่งคำสั่ง + ดูสถานะ ---------- */
+        function rmShowPhoneStatus(j) {
+            const box = $id('rmPhoneStatus'), t = $id('rmPhoneStatusText');
+            if (!box || !t) return;
+            if (j.online) {
+                box.className = 'rm-status on rm-gap';
+                t.innerText = 'คอมโรงเรียนออนไลน์ พร้อมรับคำสั่ง';
+            } else {
+                box.className = 'rm-status off rm-gap';
+                t.innerText = j.age == null
+                    ? 'ยังไม่พบคอมโรงเรียน — เปิดหน้านี้บนคอม เลือก "เครื่องนี้คือคอมโรงเรียน" แล้วเปิดสวิตช์รับคำสั่ง'
+                    : `คอมโรงเรียนออฟไลน์ (ติดต่อล่าสุดเมื่อ ${j.age >= 120 ? Math.round(j.age / 60) + ' นาที' : j.age + ' วินาที'}ก่อน)`;
+            }
+        }
+        function rmShowPhoneError(msg) {
+            const box = $id('rmPhoneStatus'), t = $id('rmPhoneStatusText');
+            if (!box || !t) return;
+            box.className = 'rm-status off rm-gap';
+            t.innerText = msg;
+        }
+        async function rmRefreshStatus() {
+            if (!navigator.onLine) { rmShowPhoneError('มือถือไม่มีอินเทอร์เน็ต'); return null; }
+            const key = getPushKey();
+            if (!key) { rmShowPhoneError('ยังไม่ได้ใส่รหัสแจ้งเตือน (หน้าประกาศเสียง → แจ้งเตือนบนมือถือ)'); return null; }
+            try {
+                const j = await pushApi({ action: 'cmd_status', key });
+                if (!j || !j.ok) { rmShowPhoneError(rmErrText(j)); return null; }
+                rmShowPhoneStatus(j);
+                renderRemoteLib(j.lib || []);
+                return j;
+            } catch (e) {
+                rmShowPhoneError('ติดต่อเซิร์ฟเวอร์ไม่ได้ ลองใหม่อีกครั้ง');
+                return null;
+            }
+        }
+        function renderRemoteLib(list) {
+            const box = $id('rmLibList');
+            if (!box) return;
+            const sig = JSON.stringify(list);
+            if (sig === JSON.stringify(rmLastLibList)) return;
+            rmLastLibList = list;
+            if (!list.length) {
+                box.innerHTML = '<div class="rm-lib-empty">ยังไม่มีไฟล์เสียงในคลังของคอมโรงเรียน<br>(เพิ่มไฟล์ที่แท็บ "คลังเสียง" บนคอม)</div>';
+                return;
+            }
+            box.innerHTML = list.map(f => `
+                <div class="rm-lib-row">
+                    <button type="button" class="rm-lib-play" onclick="remoteLib('${escapeHtml(f.id)}', this)" aria-label="เปิดไฟล์นี้บนคอมโรงเรียน"><i class="fa-solid fa-play"></i></button>
+                    <div class="rm-lib-name" title="${escapeHtml(f.name)}">${escapeHtml(f.name)}</div>
+                </div>`).join('');
+        }
+        function rmWatchAck(seq) {
+            let tries = 0;
+            const step = async () => {
+                tries++;
+                const j = await rmRefreshStatus();
+                if (j && j.ack >= seq) { showToast('คอมโรงเรียนรับคำสั่งแล้ว', 'ok', { title: 'ส่งถึงคอมแล้ว' }); return; }
+                if (tries < 10) setTimeout(step, 3000);
+                else showToast('ยังไม่ได้รับการยืนยันจากคอมโรงเรียน ตรวจว่าคอมเปิดหน้าเว็บและเปิดสวิตช์รับคำสั่งอยู่', 'warn', { title: 'ยังไม่ยืนยัน' });
+            };
+            setTimeout(step, 3000);
+        }
+        async function rmSend(type, data, label) {
+            if (!navigator.onLine) { showToast('มือถือไม่มีอินเทอร์เน็ต', 'err'); return; }
+            const key = getPushKey();
+            if (!key) { showToast('ใส่รหัสแจ้งเตือนก่อน (หน้าประกาศเสียง → แจ้งเตือนบนมือถือ)', 'warn'); return; }
+            let j;
+            try { j = await pushApi({ action: 'cmd_send', key, type, data }); }
+            catch (e) { showToast('ติดต่อเซิร์ฟเวอร์ไม่ได้ ลองใหม่อีกครั้ง', 'err'); return; }
+            if (!j || !j.ok) { showToast(rmErrText(j), 'err', { title: 'ส่งคำสั่งไม่สำเร็จ' }); return; }
+            addActivityLog('📱 ส่งคำสั่งไปคอมโรงเรียน: ' + label);
+            if (j.online) showToast(label, 'ok', { title: 'ส่งคำสั่งแล้ว' });
+            else showToast('คอมโรงเรียนไม่ได้ออนไลน์ คำสั่งจะหมดอายุภายใน 90 วินาที', 'warn', { title: 'ส่งแล้ว แต่คอมออฟไลน์' });
+            rmWatchAck(j.seq);
+        }
+        async function remoteBell(bell) {
+            const name = getBellDisplayName(bell);
+            const ok = await askConfirm({ title: `สั่งตีออด "${name}"?`, text: 'คอมโรงเรียนจะส่งเสียงออกลำโพงทันที', okText: 'ส่งคำสั่ง', tone: 'info', icon: 'fa-bell' });
+            if (ok) rmSend('bell', { bell }, 'ตีออด ' + name);
+        }
+        async function remoteTts() {
+            const el = $id('rmText'), text = el ? el.value.trim() : '';
+            if (!text) { showToast('กรุณาพิมพ์ข้อความที่ต้องการประกาศก่อน', 'warn', { title: 'ยังไม่มีข้อความ' }); return; }
+            const chime = $id('rmChime').value;
+            const ok = await askConfirm({ title: 'ส่งข้อความให้คอมโรงเรียนประกาศ?', text: text, okText: 'ส่งประกาศ', tone: 'info', icon: 'fa-bullhorn' });
+            if (ok) rmSend('tts', { text, chime }, 'ประกาศข้อความ');
+        }
+        async function remoteLib(id, btn) {
+            const row = btn && btn.closest('.rm-lib-row');
+            const name = row ? row.querySelector('.rm-lib-name').textContent : 'ไฟล์เสียง';
+            const ok = await askConfirm({ title: 'สั่งเปิดไฟล์เสียงนี้?', text: name, okText: 'ส่งคำสั่ง', tone: 'info', icon: 'fa-play' });
+            if (ok) rmSend('lib', { id }, 'เปิดไฟล์ ' + name);
+        }
+        function remoteStop() { rmSend('stop', {}, 'หยุดเสียงทั้งหมด'); }
+
+
         window.onload = function () {
             loadGeminiSettings();
             loadPushSettings();
+            remoteInit();
             const pat = document.getElementById('paTextInput');
             const cc = () => { const c = document.getElementById('paCharCount'); if (c && pat) c.innerText = pat.value.length + ' ตัวอักษร'; };
             if (pat) { pat.addEventListener('input', cc); cc(); }
