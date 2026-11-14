@@ -1819,18 +1819,14 @@
 
                 <!-- SECTION 4: DAILY BELL SCHEDULE -->
                 <section data-tab="schedule" class="tab-panel clean-card rounded-3xl p-5 sm:p-6">
-                    <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-100">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-lg">
-                                <i class="fa-regular fa-calendar-check"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-base sm:text-lg font-bold text-slate-800">ตารางเวลาออดอัตโนมัติ</h2>
-                                <p class="text-xs text-slate-500">ระบบจะตีออดและพูดประกาศให้เองตามเวลาที่ตั้งไว้ทุกวัน</p>
-                            </div>
+                    <div class="pa-head sch-head">
+                        <div class="pa-head-ico"><i class="fa-regular fa-calendar-check"></i></div>
+                        <div class="pa-head-text">
+                            <h2 class="pa-head-title">ตารางเวลาออดอัตโนมัติ</h2>
+                            <p class="pa-head-sub">ระบบจะตีออดและพูดประกาศให้เองตามเวลาที่ตั้งไว้ทุกวัน</p>
                         </div>
 
-                        <button onclick="openScheduleModal()" class="px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm flex items-center gap-2 transition cursor-pointer">
+                        <button onclick="openScheduleModal()" class="sch-add px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm flex items-center gap-2 transition cursor-pointer">
                             <i class="fa-solid fa-plus"></i>
                             <span>เพิ่มเวลาออด</span>
                         </button>
@@ -1843,9 +1839,9 @@
                     <div id="scheduleListContainer" class="max-h-[560px] overflow-y-auto pr-1"></div>
 
                     <!-- Footer actions inside Schedule card -->
-                    <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                    <div class="sch-foot mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
                         <span class="text-xs text-slate-500"><i class="fa-solid fa-floppy-disk text-emerald-600 mr-1.5"></i>บันทึกตารางเวลาในเครื่องอัตโนมัติ</span>
-                        <div class="flex flex-wrap gap-2">
+                        <div class="sch-foot-actions flex flex-wrap gap-2">
                             <button onclick="askConfirm({ title: 'คืนค่าตารางเวลาเริ่มต้น?', text: 'รายการที่แก้ไขไว้จะหายไป และกลับเป็นตารางมาตรฐาน', okText: 'คืนค่าเริ่มต้น', tone: 'warn', icon: 'fa-rotate-left' }).then(ok => { if (ok) resetDefaultSchedule(); })" class="btn-ghost cursor-pointer"><i class="fa-solid fa-rotate-left"></i>คืนค่าตารางเริ่มต้น</button>
                             <button onclick="exportScheduleJSON()" class="btn-ghost cursor-pointer"><i class="fa-solid fa-download"></i>สำรองตาราง</button>
                         </div>
@@ -2006,6 +2002,41 @@
             /* รายการไฟล์ในคลัง */
             [data-tab="library"] .flex.items-center.justify-between.gap-2.mb-2\.5 { flex-wrap:wrap; row-gap:6px; }
             [data-tab="library"] .flex.items-center.justify-between.gap-2.mb-2\.5 > button { padding:8px 0; }
+        }
+        /* ===== หน้าตารางเวลา ===== */
+        .sch-add { margin-left:auto; flex-shrink:0; white-space:nowrap; }
+        @media (max-width:640px) {
+            .sch-head { flex-wrap:wrap; row-gap:12px; }
+            .sch-head .pa-head-text { flex:1 1 calc(100% - 52px); }
+            .sch-add { margin:0; width:100%; height:48px; justify-content:center; font-size:15px; }
+
+            /* สรุป 3 ช่อง: ให้ช่อง "ออดถัดไป" กว้างกว่า */
+            .sched-summary { grid-template-columns:1fr 1fr 1.25fr; gap:8px; margin-bottom:20px; }
+            .sum-card { padding:10px 10px 9px; }
+            .sum-card b { font-size:19px; }
+            .sum-card span { display:block; font-size:11.5px; line-height:1.35; margin-top:1px; text-wrap:balance; }
+
+            /* รายการยาว: ให้เลื่อนทั้งหน้า ไม่ซ้อนแถบเลื่อนในการ์ด */
+            #scheduleListContainer { max-height:none; overflow:visible; padding-right:0; }
+            .sched-group { font-size:14px; margin:22px 2px 10px; }
+
+            /* แถวเวลาออด: เวลา | ชื่อ+รายละเอียด | สวิตช์ แล้วปุ่มอยู่แถวล่างเท่ากันหมด */
+            [data-tab="schedule"] .sched-row { display:grid; grid-template-columns:auto 1fr auto; grid-template-areas:"time body tg" "act act act"; column-gap:12px; row-gap:10px; align-items:start; padding:12px 14px; }
+            [data-tab="schedule"] .sched-row > input.tg { grid-area:tg; justify-self:end; margin-top:6px; }
+            [data-tab="schedule"] .sched-row > .sched-time { grid-area:time; min-width:66px; padding:8px 10px; font-size:17px; }
+            [data-tab="schedule"] .sched-row > .min-w-0 { grid-area:body; min-width:0; flex:none; padding-top:1px; }
+            [data-tab="schedule"] .sched-row .truncate { white-space:normal; overflow:visible; text-overflow:clip; font-size:15px; line-height:1.35; }
+            [data-tab="schedule"] .sched-sub { margin-top:6px; gap:6px 8px; }
+            [data-tab="schedule"] .sched-tts { flex:1 1 100%; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.6; font-size:12.5px; }
+            [data-tab="schedule"] .sched-row > div:last-child { grid-area:act; display:flex; width:auto; gap:8px; justify-content:stretch; padding-top:10px; border-top:1px dashed #ECE8FA; }
+            [data-tab="schedule"] .sched-test { flex:1; justify-content:center; height:42px; padding:0 14px; font-size:13.5px; }
+            [data-tab="schedule"] .sched-row .icon-btn { width:48px; height:42px; flex-shrink:0; }
+
+            /* ท้ายการ์ด */
+            .sch-foot { flex-direction:column; align-items:stretch; gap:12px; }
+            .sch-foot > span { text-align:center; }
+            .sch-foot-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+            .sch-foot-actions .btn-ghost { justify-content:center; height:44px; }
         }
     </style>
 
