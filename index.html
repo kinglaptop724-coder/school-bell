@@ -1510,17 +1510,13 @@
                 <!-- SECTION 2: SCHOOL AUDIO LIBRARY & MP3/WAV PLAYER -->
                 <section data-tab="library" class="tab-panel clean-card rounded-3xl p-5 sm:p-6">
                     <!-- Header -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-100">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-lg">
-                                <i class="fa-solid fa-compact-disc"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-base sm:text-lg font-bold text-slate-800">คลังไฟล์เสียง</h2>
-                                <p class="text-xs text-slate-500">เก็บเพลงชาติ เพลงมาร์ช เพลงพักเที่ยง และเสียงออดของโรงเรียนไว้ที่นี่</p>
-                            </div>
+                    <div class="pa-head lib-head">
+                        <div class="pa-head-ico"><i class="fa-solid fa-compact-disc"></i></div>
+                        <div class="pa-head-text">
+                            <h2 class="pa-head-title">คลังไฟล์เสียง</h2>
+                            <p class="pa-head-sub">เก็บเพลงชาติ เพลงมาร์ช เพลงพักเที่ยง และเสียงออดของโรงเรียนไว้ที่นี่</p>
                         </div>
-                        <span class="px-2.5 py-1 text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full">
+                        <span class="lib-badge px-2.5 py-1 text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full">
                             <i class="fa-solid fa-hard-drive mr-1"></i>บันทึกในเครื่อง ใช้ออฟไลน์ได้
                         </span>
                     </div>
@@ -1541,7 +1537,7 @@
                                 <div id="playerCurrentTrackTitle" class="text-base font-bold text-slate-800 truncate">ยังไม่ได้เลือกไฟล์เสียง</div>
                                 <div class="text-xs text-slate-400">ยังไม่มีไฟล์ที่กำลังเล่น</div>
                             </div>
-                            <div class="flex items-center gap-2 shrink-0">
+                            <div class="deck-ctrl flex items-center gap-2 shrink-0">
                                 <button id="deckPlayBtn" onclick="toggleDeckPlayPause()" disabled class="px-5 py-3 rounded-2xl bg-sky-600 hover:bg-sky-700 disabled:opacity-40 text-white text-sm font-bold flex items-center gap-2 transition cursor-pointer">
                                     <i id="deckPlayIcon" class="fa-solid fa-play"></i>
                                     <span id="deckPlayText">เล่น</span>
@@ -1561,7 +1557,7 @@
                             <input id="playerSeekSlider" type="range" min="0" max="100" value="0" step="0.1" oninput="seekLibraryAudio(this.value)" disabled class="w-full cursor-pointer">
                             <span id="playerDurationTime" class="text-xs font-mono font-semibold text-slate-500 w-10 text-right tabular-nums">00:00</span>
                         </div>
-                        <div class="flex items-center justify-end gap-2 mt-2.5">
+                        <div class="deck-vol flex items-center justify-end gap-2 mt-2.5">
                             <i class="fa-solid fa-volume-low text-slate-400 text-xs"></i>
                             <span class="text-xs text-slate-500">ระดับเสียงเครื่องเล่น</span>
                             <input id="deckVolumeSlider" type="range" min="0" max="100" value="100" oninput="updateDeckVolume(this.value)" class="w-28 cursor-pointer" title="ระดับเสียงเครื่องเล่นไฟล์">
@@ -1981,6 +1977,35 @@
             .ft-dev span { display:block; }
             .ft-dev .ft-a { font-size:13px; }
             .ft-sub { margin-top:6px; line-height:1.5; text-wrap:balance; }
+        }
+        .lib-badge { white-space:nowrap; flex-shrink:0; margin-left:auto; }
+        @media (max-width:640px) {
+            /* หัวคลังเสียง: ป้ายสถานะลงบรรทัดใหม่ ชิดแนวเดียวกับข้อความ */
+            .lib-head { flex-wrap:wrap; row-gap:10px; }
+            .lib-head .pa-head-text { flex:1 1 calc(100% - 52px); }
+            .lib-badge { margin:0 0 0 52px; }
+
+            /* หัวข้อส่วน + คำอธิบายรอง จัดให้ตรงแนวกัน */
+            [data-tab="library"] .sec-title { row-gap:2px; }
+            [data-tab="library"] .lib-hint { flex-basis:100%; padding-left:23px; margin:0; font-size:12.5px; }
+            [data-tab="library"] .sec-title.mb-2\.5 { margin-bottom:12px; }
+
+            /* เครื่องเล่น: ปุ่มเรียงเต็มแถว เท่ากัน */
+            [data-tab="library"] .deck-card .flex.flex-wrap { gap:14px; }
+            [data-tab="library"] .deck-ctrl { width:100%; gap:8px; }
+            [data-tab="library"] #deckPlayBtn { flex:1.4; justify-content:center; padding:0 12px; }
+            [data-tab="library"] #deckStopBtn { flex:1; justify-content:center; padding:0 12px; }
+            [data-tab="library"] #deckLoopBtn { flex:0 0 48px; }
+            [data-tab="library"] #playerCurrentTrackTitle { font-size:17px; }
+
+            /* แถบระดับเสียง: ไม่ตัดบรรทัดกลางคำ */
+            .deck-vol { justify-content:flex-start; flex-wrap:nowrap; }
+            .deck-vol > span:first-of-type { white-space:nowrap; }
+            .deck-vol input[type=range] { flex:1; width:auto; min-width:60px; }
+
+            /* รายการไฟล์ในคลัง */
+            [data-tab="library"] .flex.items-center.justify-between.gap-2.mb-2\.5 { flex-wrap:wrap; row-gap:6px; }
+            [data-tab="library"] .flex.items-center.justify-between.gap-2.mb-2\.5 > button { padding:8px 0; }
         }
     </style>
 
