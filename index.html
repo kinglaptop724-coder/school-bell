@@ -1117,8 +1117,20 @@
         [data-tab="remote"] .pa-send { height:44px; border-radius:14px; font-size:15px; gap:9px; box-shadow:0 6px 14px -8px rgba(97,64,204,.7); }
         [data-tab="remote"] .pa-send i { font-size:15px; }
         [data-tab="remote"] .rm-note { font-size:12px; margin-top:8px; }
-        [data-tab="remote"] .rm-chime { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 12px; border-radius:14px; }
-        [data-tab="remote"] .rm-chime select { text-align:right; max-width:55%; }
+        [data-tab="remote"] .rm-chime { margin-top:10px; padding:10px 12px; border-radius:14px; }
+        .rm-chimes { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; }
+        .rm-chimes button { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:54px; padding:6px 4px; border:1.5px solid #E6E2F8; border-radius:12px; background:#fff; color:#5B5778; font-size:12.5px; font-weight:600; line-height:1.2; cursor:pointer; text-align:center; transition:border-color .15s, background-color .15s, color .15s; }
+        .rm-chimes button i { font-size:15px; color:#9591B3; transition:color .15s; }
+        .rm-chimes button:hover { border-color:#BBABFA; }
+        .rm-chimes button.on { border-color:#7655E8; background:#F5F2FF; color:#4E33A3; box-shadow:0 0 0 2px rgba(118,85,232,.14); }
+        .rm-chimes button.on i { color:#7655E8; }
+        .rm-chime-lib { margin-top:8px; padding-top:8px; border-top:1px dashed #D9D2FA; display:flex; flex-wrap:wrap; gap:6px; max-height:132px; overflow-y:auto; }
+        .rm-chime-lib button { display:inline-flex; align-items:center; gap:6px; max-width:100%; height:30px; padding:0 11px; border:1.5px solid #E6E2F8; border-radius:999px; background:#fff; color:#4E33A3; font-size:12.5px; font-weight:600; cursor:pointer; transition:border-color .15s, background-color .15s; }
+        .rm-chime-lib button span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .rm-chime-lib button i { font-size:11px; color:#9591B3; flex-shrink:0; }
+        .rm-chime-lib button.on { border-color:#7655E8; background:#7655E8; color:#fff; }
+        .rm-chime-lib button.on i { color:#fff; }
+        .rm-chime-empty { font-size:12px; color:#8A86A8; line-height:1.5; }
         @media (max-width:640px) {
             [data-tab="remote"] #rmRelayCard .rl-main { flex-wrap:wrap; }
             [data-tab="remote"] #rmRelayCard .rl-btn { width:56px; height:56px; font-size:22px; }
@@ -1130,6 +1142,8 @@
             [data-tab="remote"] .pa-chips button { height:30px; padding:0 11px; }
             [data-tab="remote"] .pa-chips .pa-chip-clear { margin-left:auto; }
             [data-tab="remote"] .pa-send { height:44px; font-size:15px; }
+            .rm-chimes { grid-template-columns:1fr 1fr; }
+            .rm-chimes button { flex-direction:row; gap:8px; min-height:42px; }
         }
             /* ===== การ์ดรับคำสั่ง (โหมดคอมโรงเรียน) ===== */
         .rmx-card { background:linear-gradient(135deg,#F8F5FF 0%,#FFF7EE 100%); border:1.5px solid #E6DFFB; border-radius:22px; padding:18px; }
@@ -2066,13 +2080,15 @@
                             </div>
 
                             <!-- ใช้ร่วมกันทั้งสองโหมด -->
-                            <div class="opt-card rm-chime" style="margin-top:10px">
-                                <div class="opt-label"><i class="fa-solid fa-bell text-orange-500"></i>เสียงนำ</div>
-                                <select id="rmChime" class="bg-transparent text-sm font-semibold text-slate-800 focus:outline-none cursor-pointer">
-                                    <option value="pre_pa">ติ๊งต่อง</option>
-                                    <option value="chime_soft">ระฆังนุ่ม</option>
-                                    <option value="none">ไม่มี</option>
-                                </select>
+                            <div class="opt-card rm-chime">
+                                <div class="opt-label"><i class="fa-solid fa-bell text-orange-500"></i>เสียงนำก่อนประกาศ</div>
+                                <div class="rm-chimes" id="rmChimeBtns" role="radiogroup" aria-label="เสียงนำก่อนประกาศ">
+                                    <button type="button" class="on" data-chime="pre_pa" role="radio" aria-checked="true" onclick="rmPickChime('pre_pa')"><i class="fa-solid fa-bell"></i><span>ติ๊งต่อง</span></button>
+                                    <button type="button" data-chime="chime_soft" role="radio" aria-checked="false" onclick="rmPickChime('chime_soft')"><i class="fa-solid fa-wind"></i><span>ระฆังนุ่ม</span></button>
+                                    <button type="button" data-chime="none" role="radio" aria-checked="false" onclick="rmPickChime('none')"><i class="fa-solid fa-volume-xmark"></i><span>ไม่มี</span></button>
+                                    <button type="button" data-chime="lib" role="radio" aria-checked="false" onclick="rmPickChime('lib')"><i class="fa-solid fa-desktop"></i><span>เสียงในคอม</span></button>
+                                </div>
+                                <div id="rmChimeLib" class="rm-chime-lib hidden"></div>
                             </div>
                         </div>
 
@@ -5100,6 +5116,24 @@
             const d = new Date();
             el.innerText = `คำสั่งล่าสุด ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())} น. — ${text}`;
         }
+        // เล่นไฟล์เสียงจากคลังของคอมเป็น "เสียงนำ" แล้วค่อยทำต่อ (เล่นไม่เกิน 20 วินาที) คืน false ถ้าไม่พบไฟล์
+        function rmPlayLibChime(cid, then) {
+            const f = libraryAudioFiles.find(x => rmShortId(x.id) === cid);
+            if (!f) return false;
+            if (!f.url && f.blob) f.url = URL.createObjectURL(f.blob);
+            if (!f.url) return false;
+            stopAllAudio(false);
+            const a = new Audio(f.url);
+            a.volume = isMuted ? 0 : masterVolume;
+            activeButtonAudioObj = a;
+            setBroadcastStatus(true, 'กำลังเปิดเสียงนำ: ' + f.fileName);
+            let done = false;
+            const go = () => { if (done) return; done = true; try { a.pause(); } catch (e) {} then(); };
+            a.onended = go; a.onerror = go;
+            a.ontimeupdate = () => { if (a.currentTime > 20) go(); };
+            a.play().catch(go);
+            return true;
+        }
         function rmExecute(c) {
             const d = c.data || {};
             try {
@@ -5117,7 +5151,8 @@
                     if (!text) return;
                     rmSetLast('ประกาศข้อความ "' + text + '"');
                     addActivityLog('📱 สั่งจากมือถือ: ประกาศ "' + text + '"');
-                    if (d.chime === 'none') speakThaiText(text);
+                    if (d.chime === 'lib' && rmPlayLibChime(d.cid, () => speakThaiText(text))) { /* เล่นเสียงนำจากคลังคอม */ }
+                    else if (d.chime === 'none') speakThaiText(text);
                     else playBell(d.chime === 'chime_soft' ? 'chime_soft' : 'pre_pa', text);
                 } else if (c.type === 'voice') {
                     rmSetLast('ประกาศด้วยเสียงจากมือถือ (กำลังโหลดเสียง...)');
@@ -5181,6 +5216,7 @@
             const sig = JSON.stringify(list);
             if (sig === JSON.stringify(rmLastLibList)) return;
             rmLastLibList = list;
+            rmRenderChimeLib();
             if (!list.length) {
                 box.innerHTML = '<div class="rm-lib-empty">ยังไม่มีไฟล์เสียงในคลังของคอมโรงเรียน<br>(เพิ่มไฟล์ที่แท็บ "คลังเสียง" บนคอม)</div>';
                 return;
@@ -5243,9 +5279,9 @@
         async function remoteTts() {
             const el = $id('rmText'), text = el ? el.value.trim() : '';
             if (!text) { showToast('กรุณาพิมพ์ข้อความที่ต้องการประกาศก่อน', 'warn', { title: 'ยังไม่มีข้อความ' }); return; }
-            const chime = $id('rmChime').value;
+            const ch = rmGetChime(); if (!ch) return;
             const ok = await askConfirm({ title: 'ส่งข้อความให้คอมโรงเรียนประกาศ?', text: text, okText: 'ส่งประกาศ', tone: 'info', icon: 'fa-bullhorn' });
-            if (ok) rmSend('tts', { text, chime }, 'ประกาศข้อความ');
+            if (ok) rmSend('tts', Object.assign({ text }, ch), 'ประกาศข้อความ');
         }
         async function remoteLib(id, btn) {
             const row = btn && btn.closest('.rm-lib-row');
@@ -5258,6 +5294,34 @@
         let rmRec = null, rmRecStream = null, rmRecChunks = [], rmRecBytes = 0, rmRecSec = 0;
         let rmRecTimer = null, rmRecing = false, rmRecCancel = false, rmRecMime = 'audio/webm', rmLastVoice = null;
 
+        /* ---------- เสียงนำก่อนประกาศ (ปุ่มเลือก) ---------- */
+        let rmChimeSel = 'pre_pa', rmChimeLibId = null;
+        function rmPickChime(c) {
+            rmChimeSel = c;
+            document.querySelectorAll('#rmChimeBtns button').forEach(b => {
+                const on = b.dataset.chime === c;
+                b.classList.toggle('on', on);
+                b.setAttribute('aria-checked', on ? 'true' : 'false');
+            });
+            rmRenderChimeLib();
+        }
+        function rmPickChimeLib(id) { rmChimeLibId = id; rmRenderChimeLib(); }
+        function rmRenderChimeLib() {
+            const box = $id('rmChimeLib'); if (!box) return;
+            box.classList.toggle('hidden', rmChimeSel !== 'lib');
+            if (rmChimeSel !== 'lib') return;
+            const list = (typeof rmLastLibList !== 'undefined' && Array.isArray(rmLastLibList)) ? rmLastLibList : [];
+            if (!list.length) { box.innerHTML = '<div class="rm-chime-empty">ยังไม่มีไฟล์ในคลังของคอมโรงเรียน (รอคอมเชื่อมต่อ หรือเพิ่มไฟล์ที่แท็บ "คลังเสียง" บนคอม)</div>'; return; }
+            if (!list.some(f => f.id === rmChimeLibId)) rmChimeLibId = null;
+            box.innerHTML = list.map(f => `<button type="button" class="${f.id === rmChimeLibId ? 'on' : ''}" onclick="rmPickChimeLib('${escapeHtml(f.id)}')" title="${escapeHtml(f.name)}"><i class="fa-solid fa-music"></i><span>${escapeHtml(f.name)}</span></button>`).join('');
+        }
+        function rmGetChime() {
+            if (rmChimeSel === 'lib') {
+                if (!rmChimeLibId) { showToast('เลือกไฟล์เสียงจากคอมสำหรับเสียงนำก่อน', 'warn', { title: 'ยังไม่ได้เลือกไฟล์' }); return null; }
+                return { chime: 'lib', cid: rmChimeLibId };
+            }
+            return { chime: rmChimeSel };
+        }
         function rmSwitchMode(m) {
             const v = (m === 'voice');
             $id('rmModeBtn_voice').classList.toggle('on', v);
@@ -5379,7 +5443,8 @@
         async function rmSendVoice() {
             if (!rmLastVoice) return;
             rmSetRelayUI('playing');
-            const ok = await rmSend('voice', { mime: rmLastVoice.mime, chime: $id('rmChime').value }, 'ประกาศด้วยเสียงที่อัดไว้', { audio: rmLastVoice.audio });
+            const ch = rmGetChime(); if (!ch) return;
+            const ok = await rmSend('voice', Object.assign({ mime: rmLastVoice.mime }, ch), 'ประกาศด้วยเสียงที่อัดไว้', { audio: rmLastVoice.audio });
             rmSetRelayUI(ok ? 'done' : 'idle', ok ? undefined : 'ส่งไม่สำเร็จ กด "ส่งซ้ำ" เพื่อลองอีกครั้ง');
         }
         async function rmResendVoice() {
@@ -5409,7 +5474,8 @@
                     activeButtonAudioObj.play().catch(e => { console.warn(e); setBroadcastStatus(false); });
                 };
                 stopAllAudio(false);
-                if (d.chime === 'none') play(); else playBell(d.chime === 'chime_soft' ? 'chime_soft' : 'pre_pa', null, play);
+                if (d.chime === 'lib' && rmPlayLibChime(d.cid, play)) { /* เล่นเสียงนำจากคลังคอม */ }
+                else if (d.chime === 'none') play(); else playBell(d.chime === 'chime_soft' ? 'chime_soft' : 'pre_pa', null, play);
                 if (isMuted) showToast('คอมโรงเรียนปิดเสียงลำโพงอยู่ จึงไม่มีเสียงออก', 'warn');
             } catch (err) {
                 console.warn('rmPlayVoice', err);
