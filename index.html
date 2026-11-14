@@ -632,6 +632,53 @@
         .cm-btn:active { transform: scale(.97); }
     </style>
 
+    <style id="relay-ui">
+        #relayCard { background:#FAF9FF; border:1.5px solid var(--line,#E6E2F8); border-radius:22px; padding:18px; transition:background-color .2s, border-color .2s; }
+        #relayCard .rl-main { display:flex; align-items:center; gap:18px; }
+        #relayCard .rl-btn { width:84px; height:84px; border-radius:50%; flex-shrink:0; border:0; cursor:pointer; background:#E11D48; color:#fff; font-size:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 8px #FFE4E9; transition:transform .15s, box-shadow .2s, background-color .2s; }
+        #relayCard .rl-btn:hover { transform:scale(1.04); }
+        #relayCard .rl-btn:active { transform:scale(.96); }
+        #relayCard .rl-text { flex:1; min-width:0; }
+        #relayCard .rl-title-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        #relayCard .rl-title { font-size:20px; font-weight:700; color:#2E2A4A; line-height:1.3; }
+        #relayCard .rl-timer { font-size:16px; font-weight:700; color:#BE123C; background:#FFE4E9; padding:2px 12px; border-radius:999px; font-variant-numeric:tabular-nums; }
+        #relayCard .rl-timer.hidden { display:none; }
+        #relayCard .rl-sub { margin:4px 0 0; font-size:14px; color:#6B6788; line-height:1.5; }
+        #relayCard .rl-replay { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 16px; border-radius:999px; background:#fff; color:#4E33A3; border:1.5px solid #D6CCFC; font-size:14px; font-weight:600; cursor:pointer; flex-shrink:0; transition:background-color .15s; }
+        #relayCard .rl-replay:hover:not(:disabled) { background:#F5F2FF; }
+        #relayCard .rl-replay:disabled { opacity:.45; cursor:not-allowed; }
+        #relayCard .rl-steps { list-style:none; margin:16px 0 0; padding:14px 0 0; border-top:1px dashed #D9D2FA; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+        #relayCard .rl-steps li { display:flex; align-items:center; justify-content:center; gap:8px; color:#9591B3; transition:color .2s; }
+        #relayCard .rl-steps em { font-style:normal; font-size:14px; font-weight:600; }
+        #relayCard .rl-no { width:26px; height:26px; border-radius:50%; background:#EAE7F8; color:#8A86A8; display:inline-flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; transition:background-color .2s, color .2s; }
+        #relayCard .rl-no i { display:none; font-size:11px; }
+        #relayCard .rl-steps li.is-active { color:#2E2A4A; }
+        #relayCard .rl-steps li.is-active .rl-no { background:#7655E8; color:#fff; }
+        #relayCard .rl-steps li.is-done { color:#15803D; }
+        #relayCard .rl-steps li.is-done .rl-no { background:#16A34A; color:#fff; }
+        #relayCard .rl-steps li.is-done .rl-no b { display:none; }
+        #relayCard .rl-steps li.is-done .rl-no i { display:block; }
+
+        /* กำลังอัด */
+        #relayCard[data-state="recording"] { background:#FFF5F7; border-color:#FDA4AF; }
+        #relayCard[data-state="recording"] .rl-btn { border-radius:22px; animation:pulse-record 1.3s infinite; }
+        #relayCard[data-state="recording"] .rl-title { color:#BE123C; }
+        /* กำลังประกาศ */
+        #relayCard[data-state="playing"] { background:#F0FDF4; border-color:#86EFAC; }
+        #relayCard[data-state="playing"] .rl-btn { background:#16A34A; box-shadow:0 0 0 8px #DCFCE7; }
+        #relayCard[data-state="playing"] .rl-title { color:#15803D; }
+
+        @media (max-width:640px) {
+            #relayCard { padding:16px 14px; }
+            #relayCard .rl-main { flex-wrap:wrap; justify-content:center; text-align:center; gap:14px; }
+            #relayCard .rl-text { flex-basis:100%; order:2; }
+            #relayCard .rl-title-row { justify-content:center; }
+            #relayCard .rl-btn { order:1; width:96px; height:96px; font-size:36px; }
+            #relayCard .rl-replay { order:3; }
+            #relayCard .rl-steps li { flex-direction:column; gap:6px; text-align:center; }
+            #relayCard .rl-steps em { font-size:12px; }
+        }
+    </style>
     <style id="boot-splash">
         #bootSplash { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; background: #E6E1FA; overflow: hidden; transition: opacity .55s ease, visibility .55s ease; }
         #bootSplash::before, #bootSplash::after { content: ""; position: absolute; border-radius: 999px; pointer-events: none; }
@@ -1131,25 +1178,28 @@
 
                     <!-- TAB 1 CONTENT: HANDS-FREE VOICE COMMAND + VOICE RECORDER RELAY -->
                     <div id="paTabContent_voice" class="space-y-4">
-                        <!-- Box B: Voice Recorder Relay (อัดเสียงพูดสั้นๆ แล้วระบบเปิดติ๊งต่อง + เสียงคุณครูออกลำโพงอัตโนมัติ ไม่เกิดเสียงหอน) -->
-                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div class="flex items-center gap-3.5">
-                                <button id="voiceRelayRecordBtn" onclick="toggleVoiceRelayRecording()" class="w-12 h-12 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center text-lg transition cursor-pointer shrink-0">
-                                    <i id="voiceRelayIcon" class="fa-solid fa-record-vinyl"></i>
+                        <!-- Voice Recorder Relay: กดไมค์ -> พูด -> กดหยุด -> ลำโพงเปิดเอง -->
+                        <div id="relayCard" data-state="idle">
+                            <div class="rl-main">
+                                <button id="voiceRelayRecordBtn" onclick="toggleVoiceRelayRecording()" class="rl-btn" aria-label="อัดเสียงประกาศ">
+                                    <i id="voiceRelayIcon" class="fa-solid fa-microphone"></i>
                                 </button>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs sm:text-sm font-bold text-slate-800">โหมดฝากเสียงพูดออกลำโพงอัตโนมัติ (Voice Recorder Relay)</span>
-                                        <span id="relayTimerBadge" class="hidden px-2 py-0.5 text-xs font-mono font-bold bg-rose-100 text-rose-700 rounded-md">00:00</span>
+                                <div class="rl-text">
+                                    <div class="rl-title-row">
+                                        <span id="relayTitle" class="rl-title">กดปุ่มไมค์ แล้วพูดได้เลย</span>
+                                        <span id="relayTimerBadge" class="rl-timer hidden">00:00</span>
                                     </div>
-                                    <p id="voiceRelayStatusText" class="text-xs text-slate-500 mt-0.5">
-                                        กดเพื่อพูดบันทึกเสียง เมื่อกดหยุด ระบบจะเปิด <b>เสียงติ๊งต่อง 4 โน้ต + เสียงพูดของคุณครู</b> ออกลำโพงทันทีโดยไม่เกิดเสียงไมค์หอน
-                                    </p>
+                                    <p id="voiceRelayStatusText" class="rl-sub">พูดจบแล้วกดอีกครั้ง ระบบจะเปิดเสียงออกลำโพงให้เอง</p>
                                 </div>
+                                <button id="replayLastRecordedBtn" onclick="replayLastVoiceRelay()" disabled class="rl-replay">
+                                    <i class="fa-solid fa-rotate-right"></i><span>เปิดซ้ำ</span>
+                                </button>
                             </div>
-                            <button id="replayLastRecordedBtn" onclick="replayLastVoiceRelay()" disabled class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold disabled:opacity-40 shrink-0 transition cursor-pointer">
-                                <i class="fa-solid fa-rotate-right mr-1"></i>เปิดซ้ำเสียงล่าสุด
-                            </button>
+                            <ol class="rl-steps">
+                                <li data-step="1"><span class="rl-no"><b>1</b><i class="fa-solid fa-check"></i></span><em>กดไมค์แล้วพูด</em></li>
+                                <li data-step="2"><span class="rl-no"><b>2</b><i class="fa-solid fa-check"></i></span><em>พูดจบ กดหยุด</em></li>
+                                <li data-step="3"><span class="rl-no"><b>3</b><i class="fa-solid fa-check"></i></span><em>ลำโพงเปิดเอง</em></li>
+                            </ol>
                         </div>
                     </div>
 
@@ -2771,6 +2821,34 @@
             }
         }
 
+        // Voice Recorder Relay UI state: idle | recording | playing | done
+        function setRelayUI(state, sub) {
+            const card = document.getElementById('relayCard');
+            if (!card) return;
+            const T = {
+                idle:      ['กดปุ่มไมค์ แล้วพูดได้เลย', 'fa-microphone', 1],
+                recording: ['กำลังอัดเสียง… พูดได้เลย', 'fa-stop', 2],
+                playing:   ['กำลังประกาศออกลำโพง', 'fa-volume-high', 3],
+                done:      ['ประกาศเรียบร้อยแล้ว', 'fa-microphone', 0]
+            };
+            const S = {
+                idle:      'พูดจบแล้วกดอีกครั้ง ระบบจะเปิดเสียงออกลำโพงให้เอง',
+                recording: 'พูดจบแล้วกดปุ่มสี่เหลี่ยมเพื่อหยุด',
+                playing:   'เสียงติ๊งต่อง ตามด้วยเสียงของคุณครู',
+                done:      'กดไมค์เพื่ออัดใหม่ หรือกด "เปิดซ้ำ" เพื่อฟังอีกครั้ง'
+            };
+            const [title, icon, step] = T[state];
+            card.dataset.state = state;
+            document.getElementById('relayTitle').innerText = title;
+            document.getElementById('voiceRelayStatusText').innerText = sub || S[state];
+            document.getElementById('voiceRelayIcon').className = 'fa-solid ' + icon;
+            card.querySelectorAll('.rl-steps li').forEach(li => {
+                const n = +li.dataset.step;
+                li.classList.toggle('is-active', state === 'idle' ? n === 1 : n === step);
+                li.classList.toggle('is-done', state === 'done' ? true : n < step);
+            });
+        }
+
         // Voice Recorder Relay (MediaRecorder -> Chime + Recorded Voice Playback)
         async function toggleVoiceRelayRecording() {
             const btn = document.getElementById('voiceRelayRecordBtn');
@@ -2783,11 +2861,12 @@
                 clearInterval(relayRecordTimerInterval);
                 btn.classList.remove('mic-recording');
                 timerBadge.classList.add('hidden');
+                setRelayUI('playing');
                 return;
             }
 
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                statusText.innerText = 'เบราว์เซอร์ไม่รองรับการเข้าถึงไมโครโฟนสำหรับบันทึกเสียง';
+                setRelayUI('idle', 'เบราว์เซอร์ไม่รองรับการอัดเสียง ลองใช้ Chrome หรือ Edge');
                 showToast('เบราว์เซอร์นี้ไม่รองรับการบันทึกเสียงจากไมโครโฟน ลองใช้ Google Chrome หรือ Edge', 'err');
                 return;
             }
@@ -2808,31 +2887,31 @@
                     if (lastRecordedRelayUrl) URL.revokeObjectURL(lastRecordedRelayUrl);
                     lastRecordedRelayUrl = URL.createObjectURL(blob);
                     document.getElementById('replayLastRecordedBtn').disabled = false;
-                    statusText.innerHTML = 'กำลังเปิดเสียงติ๊งต่องนำ ตามด้วยเสียงพูดของคุณครูออกลำโพง...';
-                    addActivityLog('บันทึกเสียงพูดฝากประกาศ (Voice Recorder Relay) และส่งออกลำโพง');
+                                        addActivityLog('บันทึกเสียงพูดฝากประกาศ (Voice Recorder Relay) และส่งออกลำโพง');
                     replayLastVoiceRelay();
                 };
 
                 mediaRecorder.start();
                 isRecordingRelay = true;
                 relayRecordSeconds = 0;
-                btn.classList.add('mic-recording');
+                
                 timerBadge.classList.remove('hidden');
                 timerBadge.innerText = '00:00';
-                statusText.innerHTML = '<span class="text-rose-600 font-bold">กำลังบันทึกเสียงพูดของคุณครู... (พูดจบแล้วกดปุ่มสีแดงอีกครั้งเพื่อส่งออกลำโพง)</span>';
+                setRelayUI('recording');
 
                 relayRecordTimerInterval = setInterval(() => {
                     relayRecordSeconds++;
                     timerBadge.innerText = formatAudioTime(relayRecordSeconds);
                 }, 1000);
             } catch (err) {
-                statusText.innerText = 'กรุณาอนุญาตการใช้ไมโครโฟนเพื่อใช้งานโหมดฝากเสียงประกาศค่ะ';
+                setRelayUI('idle', 'กรุณากด "อนุญาต" ให้ใช้ไมโครโฟน แล้วลองกดอีกครั้ง');
                 showToast('กรุณาอนุญาตการใช้ไมโครโฟนในเบราว์เซอร์ เพื่อใช้งานโหมดฝากเสียงประกาศ', 'err', { title: 'ยังใช้ไมโครโฟนไม่ได้' });
             }
         }
 
         function replayLastVoiceRelay() {
             if (!lastRecordedRelayUrl) return;
+            setRelayUI('playing');
             playBell('pre_pa', null, () => {
                 activeButtonAudioObj = new Audio(lastRecordedRelayUrl);
                 activeButtonAudioObj.volume = isMuted ? 0 : masterVolume;
@@ -2840,7 +2919,7 @@
                 activeButtonAudioObj.play().catch(e => console.warn(e));
                 activeButtonAudioObj.onended = () => {
                     setBroadcastStatus(false);
-                    document.getElementById('voiceRelayStatusText').innerText = 'ส่งเสียงประกาศออกลำโพงเรียบร้อยแล้ว (กดปุ่มเพื่ออัดใหม่ได้ตลอดเวลา)';
+                    setRelayUI('done');
                 };
             });
         }
