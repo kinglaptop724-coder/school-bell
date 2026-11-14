@@ -1285,6 +1285,7 @@
                 <span id="soundSwitchText">เปิดเสียง</span>
                 <span class="hs-track"><span class="hs-knob"></span></span>
             </button>
+            <button id="installHeadBtn" type="button" onclick="installApp()" class="lock-pill" title="ติดตั้งเป็นแอปบนหน้าจอ"><i class="fa-solid fa-download"></i><span>ติดตั้งแอป</span></button>
             <button id="lockNowBtn" type="button" onclick="lockApp()" class="lock-pill" title="ล็อกหน้าจอ (ออดอัตโนมัติยังทำงานตามเวลา)">
                 <i class="fa-solid fa-lock"></i><span>ล็อก</span>
             </button>
@@ -4479,6 +4480,7 @@
         function installBarEl() { return document.getElementById('installBar'); }
         function hideInstallUI() {
             const b = installBarEl(); if (b) b.classList.remove('show');
+            const h = document.getElementById('installHeadBtn'); if (h) h.style.display = 'none';
             const c = document.getElementById('installCardBtn'); if (c) c.disabled = true;
             const n = document.getElementById('installCardNote'); if (n) n.textContent = 'ติดตั้งแล้ว ✅ (เปิดจากไอคอนบนหน้าจอ)';
         }
