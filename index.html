@@ -13,6 +13,16 @@
     <link rel="icon" href="icons/icon-192.png" type="image/png">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <!-- ไลบรารีทั้งหมดเก็บไว้ในโปรเจกต์ (ใช้ออฟไลน์ได้) -->
+    <style id="header-compact-ui">
+        @media (max-width: 640px) {
+            .header-actions { gap: 5px; }
+            .header-actions .status-switch { height: 32px; padding: 0 4px 0 9px; gap: 5px; font-size: 11.5px; }
+            .header-actions .status-switch .hs-track { width: 32px; height: 19px; }
+            .header-actions .status-switch .hs-knob { top: 2.5px; width: 14px; height: 14px; left: 15px; }
+            .header-actions .status-switch.is-off .hs-knob { left: 3px; }
+            .header-actions .lock-pill, #installHeadBtn { width: 32px; height: 32px; font-size: 13px; }
+        }
+    </style>
     <style id="install-head-ui">
         #installHeadBtn { width: 40px; padding: 0; justify-content: center; flex-shrink: 0; }
         #installHeadBtn span { display: none; }
@@ -1296,11 +1306,11 @@
 
         <div class="header-actions">
             <button id="connectionStatusBtn" type="button" role="switch" aria-checked="true" onclick="toggleOfflineSimulation()" class="status-switch" title="สถานะระบบ — คลิกเพื่อสลับไปโหมดจำลองการทำงานแบบไม่มีอินเทอร์เน็ต">
-                <span id="statusText">พร้อมใช้งาน</span>
+                <span id="statusText">พร้อม</span>
                 <span class="hs-track"><span class="hs-knob"></span></span>
             </button>
             <button id="soundSwitchBtn" type="button" role="switch" aria-checked="true" onclick="toggleSoundSwitch()" class="status-switch sound-switch" title="เปิด/ปิดเสียงลำโพงทั้งระบบ — เมื่อปิด เสียงที่กำลังเล่นจะหยุดทันทีและออดอัตโนมัติจะไม่ดัง">
-                <span id="soundSwitchText">เปิดเสียง</span>
+                <span id="soundSwitchText">เสียง</span>
                 <span class="hs-track"><span class="hs-knob"></span></span>
             </button>
             <button id="installHeadBtn" type="button" onclick="installApp()" class="lock-pill" title="ติดตั้งเป็นแอปบนหน้าจอ"><i class="fa-solid fa-download"></i><span>ติดตั้งแอป</span></button>
@@ -3448,7 +3458,7 @@
             if (!btn || !txt) return;
             btn.classList.toggle('is-off', isMuted);
             btn.setAttribute('aria-checked', String(!isMuted));
-            txt.innerText = isMuted ? 'ปิดเสียง' : 'เปิดเสียง';
+            txt.innerText = isMuted ? 'ปิดเสียง' : 'เสียง';
         }
 
         function toggleSoundSwitch() {
@@ -3524,7 +3534,7 @@
             const btn = document.getElementById('connectionStatusBtn');
             btn.classList.toggle('is-off', isOfflineSimulated);
             btn.setAttribute('aria-checked', String(!isOfflineSimulated));
-            text.innerText = isOfflineSimulated ? 'โหมดออฟไลน์' : 'พร้อมใช้งาน';
+            text.innerText = isOfflineSimulated ? 'ออฟไลน์' : 'พร้อม';
             const offMsg = isOfflineSimulated
                 ? 'สลับเป็นโหมดจำลองการทำงานแบบไม่มีอินเทอร์เน็ต (Offline 100%)'
                 : 'เชื่อมต่อสถานะปกติ (Online & Offline Hybrid)';
