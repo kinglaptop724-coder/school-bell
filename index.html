@@ -746,6 +746,27 @@
             [data-tab="library"] .file-play { width:48px; height:48px; }
         }
     </style>
+    <style id="bell-ui">
+        #bellPadGrid { gap:16px; }
+        #bellPadGrid .bell-btn-card { padding:18px; }
+        #bellPadGrid h3 { font-size:16px; line-height:1.45; }
+        #bellPadGrid .bell-btn-card > div:first-child > .flex > span:last-child { font-size:13px; font-weight:700; padding:3px 12px; }
+        #bellPadGrid .bell-btn-card .truncate { font-size:13px; padding-top:5px; padding-bottom:5px; }
+        #bellPadGrid .bp-ring { height:54px; font-size:17px; border-radius:16px; gap:10px; }
+        #bellPadGrid .bp-ring i { font-size:18px; }
+        #bellPadGrid .bp-ring:active { transform:scale(.98); }
+        #bellPadGrid .bp-change { background:transparent; color:#6140CC; font-size:13px; height:38px; border-radius:12px; border:1.5px dashed #D6CCFC; }
+        #bellPadGrid .bp-change:hover { background:#F5F2FF; color:#4E33A3; }
+        #bellPadGrid .bp-reset { font-size:13px; height:38px; border-radius:12px; }
+        #bellPadGrid .bell-btn-card .border-t { border-top:0; padding-top:0; }
+        #emergencyRow { padding:16px 18px; border-radius:20px; align-items:center; }
+        #emergencyRow .text-xs.font-bold { font-size:15px; }
+        #emergencyRow .text-xs.text-orange-700 { font-size:13px; line-height:1.5; margin-top:2px; }
+        #emergencyRow .bp-sos { height:50px; padding:0 24px; border-radius:16px; font-size:15px; display:inline-flex; align-items:center; justify-content:center; gap:10px; }
+        @media (max-width:640px) {
+            #emergencyRow .bp-sos { width:100%; }
+        }
+    </style>
     <style id="boot-splash">
         #bootSplash { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; background: #E6E1FA; overflow: hidden; transition: opacity .55s ease, visibility .55s ease; }
         #bootSplash::before, #bootSplash::after { content: ""; position: absolute; border-radius: 999px; pointer-events: none; }
@@ -1088,8 +1109,8 @@
                                 <i class="fa-solid fa-bell"></i>
                             </div>
                             <div>
-                                <h2 class="text-base sm:text-lg font-bold text-slate-800">แผงกดเสียงออดด่วน (One-Tap School Bell Pad)</h2>
-                                <p class="text-xs text-slate-500">กดปุ่มเพื่อตีออดทันที หรือกด <span class="text-sky-600 font-semibold">"เปลี่ยนไฟล์เสียง"</span> เพื่อใช้ไฟล์เสียงในคอมพิวเตอร์</p>
+                                <h2 class="text-base sm:text-lg font-bold text-slate-800">แผงกดเสียงออดด่วน</h2>
+                                <p class="text-xs text-slate-500">กดปุ่มม่วงเพื่อตีออดทันที · อยากใช้เสียงอื่น กด <span class="text-sky-600 font-semibold">"เปลี่ยนไฟล์เสียง"</span></p>
                             </div>
                         </div>
 
@@ -1103,7 +1124,7 @@
                     <div id="bellPadGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
 
                     <!-- Emergency Alert Row -->
-                    <div class="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-orange-50/70 border border-orange-200/80 rounded-2xl p-3.5">
+                    <div id="emergencyRow" class="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-orange-50/70 border border-orange-200/80 rounded-2xl p-3.5">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-xl bg-white border border-orange-200 text-orange-600 flex items-center justify-center shrink-0 shadow-2xs text-lg"><i class="fa-solid fa-triangle-exclamation"></i></div>
                             <div>
@@ -1111,8 +1132,8 @@
                                 <div class="text-xs text-orange-700">ส่งเสียงไซเรนเตือนภัย + พูดประกาศให้นักเรียนอพยพไปจุดรวมพลสนามหน้าเสาธง</div>
                             </div>
                         </div>
-                        <button onclick="openEmergencyModal()" class="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shrink-0 transition shadow-2xs cursor-pointer">
-                            กดแจ้งเหตุฉุกเฉิน
+                        <button onclick="openEmergencyModal()" class="bp-sos px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shrink-0 transition shadow-2xs cursor-pointer">
+                            <i class="fa-solid fa-triangle-exclamation"></i>กดแจ้งเหตุฉุกเฉิน
                         </button>
                     </div>
                 </section>
@@ -1946,17 +1967,17 @@
                         </div>
 
                         <div class="mt-3.5 space-y-2">
-                            <button onclick="triggerManualBell('${slot.key}')" class="w-full py-3 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition cursor-pointer">
+                            <button onclick="triggerManualBell('${slot.key}')" class="bp-ring w-full py-3 px-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition cursor-pointer">
                                 <i class="fa-solid fa-bell"></i>
                                 <span>กดตีออดทันที</span>
                             </button>
 
                             <div class="flex items-center justify-between gap-1.5 pt-1 border-t border-slate-100">
-                                <button onclick="promptUploadForBellSlot('${slot.key}')" class="flex-1 py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-sky-50 text-slate-700 hover:text-sky-700 text-xs font-semibold flex items-center justify-center gap-1 transition cursor-pointer" title="เลือกไฟล์ .wav หรือ .mp3 จากในคอมพิวเตอร์มาใช้แทนเสียงปุ่มนี้">
+                                <button onclick="promptUploadForBellSlot('${slot.key}')" class="bp-change flex-1 py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-sky-50 text-slate-700 hover:text-sky-700 text-xs font-semibold flex items-center justify-center gap-1 transition cursor-pointer" title="เลือกไฟล์ .wav หรือ .mp3 จากในคอมพิวเตอร์มาใช้แทนเสียงปุ่มนี้">
                                     <i class="fa-regular fa-folder-open"></i><span>เปลี่ยนไฟล์เสียง</span>
                                 </button>
                                 ${hasCustom ? `
-                                <button onclick="resetBellSlotToDefault('${slot.key}')" class="py-1.5 px-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold transition cursor-pointer" title="คืนค่าเสียงสังเคราะห์เดิม">
+                                <button onclick="resetBellSlotToDefault('${slot.key}')" class="bp-reset py-1.5 px-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold transition cursor-pointer" title="คืนค่าเสียงสังเคราะห์เดิม">
                                     คืนค่าเดิม
                                 </button>
                                 ` : ''}
