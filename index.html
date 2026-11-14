@@ -1091,6 +1091,46 @@
             .rm-bells { grid-template-columns:1fr 1fr; }
             .rm-bell { height:60px; font-size:13.5px; padding:0 10px; }
         }
+
+        /* ===== รีโมต: กล่องประกาศเสียงแบบกะทัดรัด ===== */
+        .rm-seg { display:flex; gap:4px; padding:3px; background:#F1EEFB; border-radius:12px; margin-bottom:12px; }
+        .rm-seg button { flex:1; display:flex; align-items:center; justify-content:center; gap:7px; height:36px; border:0; border-radius:9px; background:transparent; color:#6B6788; font-size:13.5px; font-weight:600; cursor:pointer; transition:background-color .15s, color .15s, box-shadow .15s; }
+        .rm-seg button i { font-size:13px; }
+        .rm-seg button.on { background:#fff; color:#6140CC; box-shadow:0 1px 3px rgba(60,39,126,.15); }
+        [data-tab="remote"] #rmRelayCard { padding:12px 14px; border-radius:16px; }
+        [data-tab="remote"] #rmRelayCard .rl-main { gap:12px; flex-wrap:nowrap; justify-content:flex-start; text-align:left; }
+        [data-tab="remote"] #rmRelayCard .rl-btn { width:56px; height:56px; font-size:22px; box-shadow:0 0 0 5px #FFE4E9; order:0; }
+        [data-tab="remote"] #rmRelayCard .rl-text { flex:1; flex-basis:auto; order:0; }
+        [data-tab="remote"] #rmRelayCard .rl-title-row { justify-content:flex-start; }
+        [data-tab="remote"] #rmRelayCard .rl-title { font-size:15.5px; }
+        [data-tab="remote"] #rmRelayCard .rl-timer { font-size:13px; padding:1px 9px; }
+        [data-tab="remote"] #rmRelayCard .rl-sub { font-size:12.5px; margin-top:2px; padding:0; text-wrap:pretty; }
+        [data-tab="remote"] #rmRelayCard .rl-replay { height:34px; padding:0 12px; font-size:12.5px; gap:6px; min-width:0; order:0; }
+        [data-tab="remote"] #rmRelayCard .rl-steps { margin-top:10px; padding-top:10px; gap:4px; }
+        [data-tab="remote"] #rmRelayCard .rl-steps li { flex-direction:row; gap:6px; }
+        [data-tab="remote"] #rmRelayCard .rl-steps em { font-size:12.5px; }
+        [data-tab="remote"] #rmRelayCard .rl-no { width:20px; height:20px; font-size:11px; }
+        [data-tab="remote"] .pa-chips { gap:6px; margin-bottom:8px; }
+        [data-tab="remote"] .pa-chips-lbl { font-size:12.5px; }
+        [data-tab="remote"] .pa-chips button { height:30px; padding:0 11px; font-size:12.5px; gap:6px; }
+        [data-tab="remote"] .pa-textarea { min-height:76px; font-size:15px !important; padding:10px 12px !important; border-radius:14px !important; }
+        [data-tab="remote"] .pa-send { height:44px; border-radius:14px; font-size:15px; gap:9px; box-shadow:0 6px 14px -8px rgba(97,64,204,.7); }
+        [data-tab="remote"] .pa-send i { font-size:15px; }
+        [data-tab="remote"] .rm-note { font-size:12px; margin-top:8px; }
+        [data-tab="remote"] .rm-chime { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 12px; border-radius:14px; }
+        [data-tab="remote"] .rm-chime select { text-align:right; max-width:55%; }
+        @media (max-width:640px) {
+            [data-tab="remote"] #rmRelayCard .rl-main { flex-wrap:wrap; }
+            [data-tab="remote"] #rmRelayCard .rl-btn { width:56px; height:56px; font-size:22px; }
+            [data-tab="remote"] #rmRelayCard .rl-replay { flex-basis:100%; justify-content:center; }
+            [data-tab="remote"] #rmRelayCard .rl-steps li { flex-direction:column; gap:4px; text-align:center; }
+            [data-tab="remote"] #rmRelayCard .rl-steps em { font-size:12px; }
+            [data-tab="remote"] .pa-chips { display:flex; }
+            [data-tab="remote"] .pa-chips-lbl { grid-column:auto; margin:0; }
+            [data-tab="remote"] .pa-chips button { height:30px; padding:0 11px; }
+            [data-tab="remote"] .pa-chips .pa-chip-clear { margin-left:auto; }
+            [data-tab="remote"] .pa-send { height:44px; font-size:15px; }
+        }
             /* ===== การ์ดรับคำสั่ง (โหมดคอมโรงเรียน) ===== */
         .rmx-card { background:linear-gradient(135deg,#F8F5FF 0%,#FFF7EE 100%); border:1.5px solid #E6DFFB; border-radius:22px; padding:18px; }
         .rmx-head { display:flex; align-items:center; gap:14px; }
@@ -1775,9 +1815,9 @@
                             </div>
                             <div class="pa-chips">
                                 <span class="pa-chips-lbl">ข้อความสำเร็จรูป:</span>
-                                <button type="button" onclick="paUseTemplate('ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ ขอบคุณค่ะ')"><i class="fa-solid fa-users"></i>เรียกประชุมครู</button>
-                                <button type="button" onclick="paUseTemplate('ขอความร่วมมือนักเรียนทุกคนเข้าแถวอย่างเป็นระเบียบ ขอบคุณค่ะ')"><i class="fa-solid fa-child-reaching"></i>เรียกนักเรียน</button>
-                                <button type="button" onclick="paUseTemplate('ขอเรียนเชิญผู้ปกครองมาพบคุณครูที่ห้องประชาสัมพันธ์ในเวลานี้ค่ะ ขอบคุณค่ะ')"><i class="fa-solid fa-user-group"></i>เรียกผู้ปกครอง</button>
+                                <button type="button" onclick="paUseTemplate('ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ ขอบคุณค่ะ')"><i class="fa-solid fa-users"></i>ประชุมครู</button>
+                                <button type="button" onclick="paUseTemplate('ขอความร่วมมือนักเรียนทุกคนเข้าแถวอย่างเป็นระเบียบ ขอบคุณค่ะ')"><i class="fa-solid fa-child-reaching"></i>นักเรียน</button>
+                                <button type="button" onclick="paUseTemplate('ขอเรียนเชิญผู้ปกครองมาพบคุณครูที่ห้องประชาสัมพันธ์ในเวลานี้ค่ะ ขอบคุณค่ะ')"><i class="fa-solid fa-user-group"></i>ผู้ปกครอง</button>
                                 <button type="button" class="pa-chip-clear" onclick="paUseTemplate('')"><i class="fa-solid fa-eraser"></i>ล้างข้อความ</button>
                             </div>
                             <textarea id="paTextInput" rows="4" placeholder="พิมพ์ข้อความตรงนี้ เช่น ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ" class="pa-textarea w-full rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-sky-500 focus:outline-none p-4 text-sm text-slate-800 placeholder-slate-400 leading-relaxed transition">ประชาสัมพันธ์จากห้องวิชาการ ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ ขอบคุณค่ะ</textarea>
@@ -1976,17 +2016,11 @@
                     <div id="rmPhonePanel" class="hidden">
                         <div id="rmPhoneStatus" class="rm-status rm-gap"><span class="rm-dot"></span><span id="rmPhoneStatusText">กำลังตรวจสอบสถานะคอมโรงเรียน...</span></div>
 
-                        <div class="sec-title mb-2.5"><i class="fa-solid fa-bullhorn"></i>ประกาศเสียงตามสายโดยไม่ต้องเดินไปจับไมค์</div>
+                        <div class="sec-title mb-2.5"><i class="fa-solid fa-bullhorn"></i>ประกาศเสียงตามสาย</div>
                         <div class="rm-gap">
-                            <div class="pa-modes">
-                                <button id="rmModeBtn_voice" type="button" onclick="rmSwitchMode('voice')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-white text-sky-700 shadow-2xs transition cursor-pointer flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-microphone-lines"></i>
-                                    <span class="pa-m-lbl"><span class="pa-m-no">1. </span><span class="pa-m-a">อัดเสียงประกาศ</span><span class="pa-m-b pa-m-mob">พูดแล้วส่งเข้าลำโพง</span></span>
-                                </button>
-                                <button id="rmModeBtn_tts" type="button" onclick="rmSwitchMode('tts')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-comment-dots"></i>
-                                    <span class="pa-m-lbl"><span class="pa-m-no">2. </span><span class="pa-m-a">พิมพ์ข้อความ</span> <span class="pa-m-b">ให้คอมโรงเรียนพูดแทน</span></span>
-                                </button>
+                            <div class="rm-seg" role="tablist">
+                                <button id="rmModeBtn_voice" type="button" onclick="rmSwitchMode('voice')" class="on" role="tab"><i class="fa-solid fa-microphone-lines"></i>อัดเสียง</button>
+                                <button id="rmModeBtn_tts" type="button" onclick="rmSwitchMode('tts')" role="tab"><i class="fa-solid fa-keyboard"></i>พิมพ์ข้อความ</button>
                             </div>
 
                             <!-- โหมด 1: อัดเสียงบนมือถือ แล้วส่งไปเล่นที่ลำโพงคอมโรงเรียน -->
@@ -2001,43 +2035,43 @@
                                                 <span id="rmRelayTitle" class="rl-title">กดปุ่มไมค์ แล้วพูดได้เลย</span>
                                                 <span id="rmRelayTimer" class="rl-timer hidden">00:00</span>
                                             </div>
-                                            <p id="rmRelayStatus" class="rl-sub">พูดจบแล้วกดอีกครั้ง ระบบจะส่งเสียงไปออกลำโพงโรงเรียนให้เอง</p>
+                                            <p id="rmRelayStatus" class="rl-sub">พูดจบกดอีกครั้ง เสียงจะออกลำโพงโรงเรียน</p>
                                         </div>
                                         <button id="rmRelayResend" type="button" onclick="rmResendVoice()" disabled class="rl-replay">
                                             <i class="fa-solid fa-rotate-right"></i><span>ส่งซ้ำ</span>
                                         </button>
                                     </div>
                                     <ol class="rl-steps">
-                                        <li data-step="1"><span class="rl-no"><b>1</b><i class="fa-solid fa-check"></i></span><em>กดไมค์แล้วพูด</em></li>
-                                        <li data-step="2"><span class="rl-no"><b>2</b><i class="fa-solid fa-check"></i></span><em>พูดจบ กดหยุด</em></li>
-                                        <li data-step="3"><span class="rl-no"><b>3</b><i class="fa-solid fa-check"></i></span><em>ลำโพงโรงเรียนเปิดเอง</em></li>
+                                        <li data-step="1"><span class="rl-no"><b>1</b><i class="fa-solid fa-check"></i></span><em>กดไมค์พูด</em></li>
+                                        <li data-step="2"><span class="rl-no"><b>2</b><i class="fa-solid fa-check"></i></span><em>กดหยุด</em></li>
+                                        <li data-step="3"><span class="rl-no"><b>3</b><i class="fa-solid fa-check"></i></span><em>ลำโพงเล่นเอง</em></li>
                                     </ol>
                                 </div>
-                                <p class="rm-note">อัดได้ครั้งละไม่เกินประมาณ 25 วินาที · เสียงจะออกที่ลำโพงของคอมโรงเรียน ไม่ได้ออกที่มือถือ · ต้องอนุญาตให้ใช้ไมโครโฟน</p>
+                                <p class="rm-note">อัดได้ไม่เกิน 25 วินาที · เสียงออกที่ลำโพงคอม ไม่ออกที่มือถือ</p>
                             </div>
 
                             <!-- โหมด 2: พิมพ์ข้อความให้คอมพูด -->
                             <div id="rmModeTts" class="hidden">
                                 <div class="pa-chips">
-                                    <span class="pa-chips-lbl">ข้อความสำเร็จรูป:</span>
+                                    <span class="pa-chips-lbl">ตัวอย่าง:</span>
                                     <button type="button" onclick="rmUseTemplate('ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ ขอบคุณค่ะ')"><i class="fa-solid fa-users"></i>เรียกประชุมครู</button>
                                     <button type="button" onclick="rmUseTemplate('ขอความร่วมมือนักเรียนทุกคนเข้าแถวอย่างเป็นระเบียบ ขอบคุณค่ะ')"><i class="fa-solid fa-child-reaching"></i>เรียกนักเรียน</button>
                                     <button type="button" onclick="rmUseTemplate('ขอเรียนเชิญผู้ปกครองมาพบคุณครูที่ห้องประชาสัมพันธ์ในเวลานี้ค่ะ ขอบคุณค่ะ')"><i class="fa-solid fa-user-group"></i>เรียกผู้ปกครอง</button>
-                                    <button type="button" class="pa-chip-clear" onclick="rmUseTemplate('')"><i class="fa-solid fa-eraser"></i>ล้างข้อความ</button>
+                                    <button type="button" class="pa-chip-clear" onclick="rmUseTemplate('')"><i class="fa-solid fa-eraser"></i>ล้าง</button>
                                 </div>
-                                <textarea id="rmText" rows="3" maxlength="300" oninput="document.getElementById('rmCharCount').innerText = this.value.length + ' ตัวอักษร'" placeholder="เช่น ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ" class="pa-textarea w-full rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-sky-500 focus:outline-none p-4 text-sm text-slate-800 placeholder-slate-400 leading-relaxed transition"></textarea>
+                                <textarea id="rmText" rows="2" maxlength="300" oninput="document.getElementById('rmCharCount').innerText = this.value.length + ' ตัวอักษร'" placeholder="เช่น ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ" class="pa-textarea w-full rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-sky-500 focus:outline-none p-4 text-sm text-slate-800 placeholder-slate-400 leading-relaxed transition"></textarea>
                                 <div class="text-xs text-slate-400 tabular-nums" id="rmCharCount" style="margin-top:6px;text-align:right">0 ตัวอักษร</div>
-                                <button type="button" onclick="remoteTts()" class="pa-send" style="margin-top:12px"><i class="fa-solid fa-paper-plane"></i><span>ส่งไปให้คอมโรงเรียนพูด</span></button>
-                                <p class="rm-note">ข้อความยาวได้ไม่เกิน 300 ตัวอักษร · ถ้าเปิดเสียง Gemini ไว้บนคอมโรงเรียน คอมจะใช้เสียงนั้นพูด</p>
+                                <button type="button" onclick="remoteTts()" class="pa-send" style="margin-top:8px"><i class="fa-solid fa-paper-plane"></i><span>ส่งประกาศ</span></button>
+                                <p class="rm-note">ไม่เกิน 300 ตัวอักษร · คอมโรงเรียนเป็นผู้พูด</p>
                             </div>
 
                             <!-- ใช้ร่วมกันทั้งสองโหมด -->
-                            <div class="opt-card" style="margin-top:12px">
-                                <div class="opt-label"><i class="fa-solid fa-bell text-orange-500"></i>เสียงนำก่อนประกาศ</div>
-                                <select id="rmChime" class="w-full bg-transparent text-sm font-semibold text-slate-800 focus:outline-none cursor-pointer mt-1.5">
-                                    <option value="pre_pa">ติ๊งต่อง 4 โน้ต</option>
-                                    <option value="chime_soft">ระฆังนุ่มนวล</option>
-                                    <option value="none">ไม่มีเสียงนำ (ประกาศทันที)</option>
+                            <div class="opt-card rm-chime" style="margin-top:10px">
+                                <div class="opt-label"><i class="fa-solid fa-bell text-orange-500"></i>เสียงนำ</div>
+                                <select id="rmChime" class="bg-transparent text-sm font-semibold text-slate-800 focus:outline-none cursor-pointer">
+                                    <option value="pre_pa">ติ๊งต่อง</option>
+                                    <option value="chime_soft">ระฆังนุ่ม</option>
+                                    <option value="none">ไม่มี</option>
                                 </select>
                             </div>
                         </div>
@@ -5225,11 +5259,9 @@
         let rmRecTimer = null, rmRecing = false, rmRecCancel = false, rmRecMime = 'audio/webm', rmLastVoice = null;
 
         function rmSwitchMode(m) {
-            const ON = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-white text-sky-700 shadow-2xs transition cursor-pointer flex items-center justify-center gap-2';
-            const OFF = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer flex items-center justify-center gap-2';
             const v = (m === 'voice');
-            $id('rmModeBtn_voice').className = v ? ON : OFF;
-            $id('rmModeBtn_tts').className = v ? OFF : ON;
+            $id('rmModeBtn_voice').classList.toggle('on', v);
+            $id('rmModeBtn_tts').classList.toggle('on', !v);
             $id('rmModeVoice').classList.toggle('hidden', !v);
             $id('rmModeTts').classList.toggle('hidden', v);
         }
@@ -5243,16 +5275,16 @@
         function rmSetRelayUI(state, sub) {
             const card = $id('rmRelayCard'); if (!card) return;
             const T = {
-                idle:      ['กดปุ่มไมค์ แล้วพูดได้เลย', 'fa-microphone', 1],
-                recording: ['กำลังอัดเสียง… พูดได้เลย', 'fa-stop', 2],
-                playing:   ['กำลังส่งไปลำโพงโรงเรียน', 'fa-paper-plane', 3],
-                done:      ['ส่งเรียบร้อยแล้ว', 'fa-microphone', 0]
+                idle:      ['กดไมค์ แล้วพูดได้เลย', 'fa-microphone', 1],
+                recording: ['กำลังอัดเสียง…', 'fa-stop', 2],
+                playing:   ['กำลังส่งไปลำโพง', 'fa-paper-plane', 3],
+                done:      ['ส่งเรียบร้อย', 'fa-microphone', 0]
             };
             const S = {
-                idle:      'พูดจบแล้วกดอีกครั้ง ระบบจะส่งเสียงไปออกลำโพงโรงเรียนให้เอง',
-                recording: 'พูดจบแล้วกดปุ่มสี่เหลี่ยมเพื่อหยุด',
-                playing:   'คอมโรงเรียนจะเปิดเสียงนำ ตามด้วยเสียงของคุณครู',
-                done:      'กดไมค์เพื่ออัดใหม่ หรือกด "ส่งซ้ำ" เพื่อส่งเสียงล่าสุดอีกครั้ง'
+                idle:      'พูดจบกดอีกครั้ง เสียงจะออกลำโพงโรงเรียน',
+                recording: 'พูดจบกดปุ่มสี่เหลี่ยมเพื่อหยุด',
+                playing:   'คอมโรงเรียนกำลังเล่นเสียง',
+                done:      'กดไมค์เพื่ออัดใหม่ หรือกด "ส่งซ้ำ"'
             };
             const [title, icon, step] = T[state];
             card.dataset.state = state;
