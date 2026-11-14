@@ -950,8 +950,274 @@
             .onair-msg { font-size:17px; }
         }
     </style>
+    <style id="lock-ui">
+        #lockScreen { position:fixed; inset:0; z-index:300; display:none; align-items:center; justify-content:center; padding:20px; background:#E6E1FA; overflow-y:auto; }
+        #lockScreen.show { display:flex; }
+        body.lk-open { overflow:hidden; }
+        body #broadcastBanner { z-index:350; } /* กล่อง ON AIR และปุ่มหยุดต้องเห็นได้แม้ล็อกอยู่ */
+        .lk-card { width:100%; max-width:400px; background:#fff; border-radius:28px; padding:32px 28px 26px; text-align:center; box-shadow:0 30px 60px -24px rgba(60,39,126,.5); margin:auto; }
+        .lk-card.shake { animation:lk-shake .4s; }
+        @keyframes lk-shake { 0%,100% { transform:translateX(0); } 20%,60% { transform:translateX(-8px); } 40%,80% { transform:translateX(8px); } }
+        .lk-logo { width:72px; height:72px; margin:0 auto 14px; border-radius:24px; background:#7655E8; color:#fff; font-size:30px; display:flex; align-items:center; justify-content:center; box-shadow:0 14px 26px -12px rgba(118,85,232,.85); }
+        .lk-title { margin:0; font-size:19px; font-weight:700; color:#2E2A4A; line-height:1.4; }
+        .lk-school { margin:2px 0 22px; font-size:13px; color:#8A86A8; }
+        .lk-form { display:flex; flex-direction:column; gap:10px; text-align:left; }
+        .lk-form[hidden] { display:none; }
+        .lk-badge { align-self:center; font-size:13px; font-weight:700; color:#6140CC; background:#EFEAFF; padding:3px 14px; border-radius:999px; margin-bottom:4px; }
+        .lk-label { font-size:14px; font-weight:600; color:#2E2A4A; display:flex; align-items:center; gap:8px; }
+        .lk-label small { font-weight:400; color:#8A86A8; font-size:12px; }
+        .lk-label i { color:#7655E8; }
+        .lk-field { position:relative; }
+        .lk-field input { width:100%; height:52px; border-radius:16px; border:1.5px solid #D6CCFC; background:#FAF9FF; padding:0 48px 0 16px; font-size:18px; color:#2E2A4A; font-family:inherit; transition:border-color .15s, background-color .15s; }
+        .lk-field input:focus { outline:none; border-color:#7655E8; background:#fff; box-shadow:0 0 0 4px rgba(118,85,232,.15); }
+        .lk-eye { position:absolute; right:6px; top:6px; width:40px; height:40px; border:0; border-radius:12px; background:transparent; color:#8A86A8; cursor:pointer; font-size:16px; }
+        .lk-eye:hover { background:#F1EDFF; color:#6140CC; }
+        .lk-btn { height:54px; margin-top:6px; border:0; border-radius:16px; background:#7655E8; color:#fff; font-size:17px; font-weight:700; font-family:inherit; cursor:pointer; box-shadow:0 10px 22px -10px rgba(97,64,204,.7); transition:background-color .15s, transform .1s; }
+        .lk-btn:hover { background:#6140CC; }
+        .lk-btn:active { transform:scale(.98); }
+        .lk-btn:disabled { opacity:.6; cursor:wait; }
+        .lk-link { align-self:center; border:0; background:none; color:#6140CC; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; padding:6px 10px; border-radius:10px; }
+        .lk-link:hover { background:#F5F2FF; }
+        .lk-note { margin:6px 0 0; font-size:12.5px; line-height:1.5; color:#8A86A8; text-align:center; }
+        .lk-note i { color:#F5B52B; margin-right:6px; }
+        .lk-msg { margin:14px 0 0; font-size:14px; font-weight:600; line-height:1.5; min-height:0; }
+        .lk-msg:empty { display:none; }
+        .lk-msg.err { color:#BE123C; background:#FFF1F2; border:1px solid #FECDD3; padding:10px 14px; border-radius:14px; }
+        .lk-msg.ok { color:#15803D; background:#F0FDF4; border:1px solid #BBF7D0; padding:10px 14px; border-radius:14px; }
+        .lock-pill { display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 16px; border-radius:999px; background:#fff; color:#6140CC; border:1px solid #D6CCFC; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; transition:background-color .15s; }
+        .lock-pill:hover { background:#F5F2FF; }
+        @media (max-width:640px) {
+            .lk-card { padding:28px 20px 22px; }
+            .lock-pill { width:36px; height:36px; padding:0; justify-content:center; }
+            .lock-pill span { display:none; }
+        }
+    </style>
     </head>
 <body class="selection:bg-violet-200 selection:text-slate-900">
+<!-- ===== LOCK SCREEN (ถามรหัสผ่านก่อนเข้าระบบ) ===== -->
+<div id="lockScreen" class="show" role="dialog" aria-modal="true" aria-label="เข้าสู่ระบบ">
+    <div class="lk-card">
+        <div class="lk-logo"><i class="fa-solid fa-bell"></i></div>
+        <h1 class="lk-title">ระบบออดและประกาศเสียงตามสาย</h1>
+        <p class="lk-school">โรงเรียนอนุบาลชุมชนหนองบัวแดง</p>
+
+        <form id="lkLogin" class="lk-form" hidden autocomplete="off">
+            <label class="lk-label" for="lkLoginPw"><i class="fa-solid fa-lock"></i>ใส่รหัสผ่านเพื่อเข้าใช้งาน</label>
+            <div class="lk-field">
+                <input id="lkLoginPw" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" required>
+                <button type="button" class="lk-eye" data-eye="lkLoginPw" aria-label="แสดง/ซ่อนรหัสผ่าน"><i class="fa-regular fa-eye"></i></button>
+            </div>
+            <button type="submit" class="lk-btn">เข้าสู่ระบบ</button>
+            <button type="button" class="lk-link" data-go="change">เปลี่ยนรหัสผ่าน</button>
+            <p class="lk-note"><i class="fa-solid fa-bell"></i>ออดอัตโนมัติยังทำงานตามเวลาปกติ แม้หน้านี้จะล็อกอยู่</p>
+        </form>
+
+        <form id="lkSetup" class="lk-form" hidden autocomplete="off">
+            <div class="lk-badge">ตั้งรหัสผ่านครั้งแรก</div>
+            <label class="lk-label" for="lkSetupPw1">ตั้งรหัสผ่านใหม่ <small>(อย่างน้อย 4 ตัวอักษร)</small></label>
+            <div class="lk-field">
+                <input id="lkSetupPw1" type="password" autocomplete="new-password" placeholder="รหัสผ่านใหม่" required>
+                <button type="button" class="lk-eye" data-eye="lkSetupPw1" aria-label="แสดง/ซ่อนรหัสผ่าน"><i class="fa-regular fa-eye"></i></button>
+            </div>
+            <label class="lk-label" for="lkSetupPw2">ใส่รหัสผ่านอีกครั้ง</label>
+            <div class="lk-field">
+                <input id="lkSetupPw2" type="password" autocomplete="new-password" placeholder="ยืนยันรหัสผ่าน" required>
+                <button type="button" class="lk-eye" data-eye="lkSetupPw2" aria-label="แสดง/ซ่อนรหัสผ่าน"><i class="fa-regular fa-eye"></i></button>
+            </div>
+            <button type="submit" class="lk-btn">ตั้งรหัสผ่านและเข้าสู่ระบบ</button>
+        </form>
+
+        <form id="lkChange" class="lk-form" hidden autocomplete="off">
+            <div class="lk-badge">เปลี่ยนรหัสผ่าน</div>
+            <label class="lk-label" for="lkOldPw">รหัสผ่านเดิม</label>
+            <div class="lk-field">
+                <input id="lkOldPw" type="password" autocomplete="current-password" placeholder="รหัสผ่านเดิม" required>
+                <button type="button" class="lk-eye" data-eye="lkOldPw" aria-label="แสดง/ซ่อนรหัสผ่าน"><i class="fa-regular fa-eye"></i></button>
+            </div>
+            <label class="lk-label" for="lkNewPw1">รหัสผ่านใหม่ <small>(อย่างน้อย 4 ตัวอักษร)</small></label>
+            <div class="lk-field">
+                <input id="lkNewPw1" type="password" autocomplete="new-password" placeholder="รหัสผ่านใหม่" required>
+                <button type="button" class="lk-eye" data-eye="lkNewPw1" aria-label="แสดง/ซ่อนรหัสผ่าน"><i class="fa-regular fa-eye"></i></button>
+            </div>
+            <label class="lk-label" for="lkNewPw2">ใส่รหัสผ่านใหม่อีกครั้ง</label>
+            <div class="lk-field">
+                <input id="lkNewPw2" type="password" autocomplete="new-password" placeholder="ยืนยันรหัสผ่านใหม่" required>
+                <button type="button" class="lk-eye" data-eye="lkNewPw2" aria-label="แสดง/ซ่อนรหัสผ่าน"><i class="fa-regular fa-eye"></i></button>
+            </div>
+            <button type="submit" class="lk-btn">บันทึกรหัสผ่านใหม่</button>
+            <button type="button" class="lk-link" data-go="login">ย้อนกลับ</button>
+        </form>
+
+        <p id="lkMsg" class="lk-msg" role="alert" aria-live="assertive"></p>
+    </div>
+</div>
+<script>
+(function () {
+    'use strict';
+    var KEY = 'nongbuadaeng_lock_v1', FAILKEY = 'nongbuadaeng_lock_fail';
+    var AUTO_LOCK_MIN = 10;   // ล็อกอัตโนมัติเมื่อไม่มีใครใช้งานกี่นาที (0 = ปิด)
+    var MAX_FAILS = 5, WAIT_SEC = 30, MIN_LEN = 4;
+    var $ = function (id) { return document.getElementById(id); };
+    var screenEl = $('lockScreen');
+    var forms = { setup: $('lkSetup'), login: $('lkLogin'), change: $('lkChange') };
+    var locked = false, lastActive = Date.now();
+
+    function read() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+    function write(rec) { localStorage.setItem(KEY, JSON.stringify(rec)); }
+    function toHex(bytes) { return Array.prototype.map.call(bytes, function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''); }
+    function fromHex(h) { var a = new Uint8Array(h.length / 2); for (var i = 0; i < a.length; i++) a[i] = parseInt(h.substr(i * 2, 2), 16); return a; }
+    function newSalt() {
+        var a = new Uint8Array(16);
+        if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(a);
+        else for (var i = 0; i < 16; i++) a[i] = Math.floor(Math.random() * 256);
+        return toHex(a);
+    }
+    function cyrb(str, seed) { // สำรองเมื่อเบราว์เซอร์ไม่มี crypto.subtle (เปิดผ่าน http ที่ไม่ใช่ localhost)
+        var h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+        for (var i = 0; i < str.length; i++) { var ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+        h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+        return (h2 >>> 0).toString(16) + (h1 >>> 0).toString(16);
+    }
+    function hashPw(pw, salt, algo) {
+        if (algo === 'pbkdf2' && window.crypto && crypto.subtle) {
+            var enc = new TextEncoder();
+            return crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveBits']).then(function (key) {
+                return crypto.subtle.deriveBits({ name: 'PBKDF2', salt: fromHex(salt), iterations: 100000, hash: 'SHA-256' }, key, 256);
+            }).then(function (bits) { return toHex(new Uint8Array(bits)); });
+        }
+        return Promise.resolve(cyrb(salt + pw, 1) + cyrb(pw + salt, 2));
+    }
+    function pickAlgo() { return (window.crypto && crypto.subtle) ? 'pbkdf2' : 'cyrb'; }
+    function makeRecord(pw) {
+        var salt = newSalt(), algo = pickAlgo();
+        return hashPw(pw, salt, algo).then(function (h) { return { salt: salt, hash: h, algo: algo }; });
+    }
+
+    function setMsg(text, ok) { var m = $('lkMsg'); m.textContent = text || ''; m.className = 'lk-msg' + (text ? (ok ? ' ok' : ' err') : ''); }
+    function show(name, msg, ok) {
+        Object.keys(forms).forEach(function (k) {
+            forms[k].hidden = (k !== name);
+            if (k !== name) forms[k].reset();
+        });
+        [].forEach.call(screenEl.querySelectorAll('input[type=password],input[type=text]'), function (i) { i.type = 'password'; });
+        setMsg(msg, ok);
+        var first = forms[name].querySelector('input');
+        setTimeout(function () { if (first) first.focus(); }, 60);
+    }
+    function setInert(on) {
+        [].forEach.call(document.body.children, function (el) {
+            if (el === screenEl || el.id === 'broadcastBanner' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+            if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert');
+        });
+    }
+    function lock(msg) {
+        locked = true;
+        screenEl.classList.add('show'); document.body.classList.add('lk-open');
+        setInert(true);
+        show(read() ? 'login' : 'setup', msg);
+    }
+    function unlock() {
+        locked = false; lastActive = Date.now();
+        screenEl.classList.remove('show'); document.body.classList.remove('lk-open');
+        setInert(false);
+        setMsg('');
+        Object.keys(forms).forEach(function (k) { forms[k].reset(); });
+    }
+    function busy(form, on) { var b = form.querySelector('.lk-btn'); if (b) b.disabled = on; }
+    function shake() { var c = screenEl.querySelector('.lk-card'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }
+    function failState() { try { return JSON.parse(localStorage.getItem(FAILKEY) || '{}'); } catch (e) { return {}; } }
+    function waitLeft() { var st = failState(); return st.until && st.until > Date.now() ? Math.ceil((st.until - Date.now()) / 1000) : 0; }
+    function registerFail() {
+        var st = failState(); st.n = (st.n || 0) + 1;
+        if (st.n >= MAX_FAILS) { st.until = Date.now() + WAIT_SEC * 1000; st.n = 0; }
+        try { localStorage.setItem(FAILKEY, JSON.stringify(st)); } catch (e) {}
+        return st;
+    }
+    function checkPw(pw) {
+        var rec = read(); if (!rec) return Promise.resolve(false);
+        return hashPw(pw, rec.salt, rec.algo).then(function (h) { return h === rec.hash; });
+    }
+    function tooSoon() {
+        var w = waitLeft();
+        if (w) { setMsg('ใส่รหัสผิดหลายครั้ง กรุณารออีก ' + w + ' วินาที แล้วลองใหม่', false); shake(); return true; }
+        return false;
+    }
+    function wrong() {
+        var st = registerFail();
+        var w = waitLeft();
+        setMsg(w ? 'ใส่รหัสผิดหลายครั้ง กรุณารออีก ' + w + ' วินาที' : 'รหัสผ่านไม่ถูกต้อง ลองใหม่อีกครั้ง', false);
+        shake();
+    }
+
+    forms.login.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (tooSoon()) return;
+        var inp = $('lkLoginPw'); busy(forms.login, true);
+        checkPw(inp.value).then(function (ok) {
+            busy(forms.login, false);
+            if (ok) { try { localStorage.removeItem(FAILKEY); } catch (x) {} unlock(); }
+            else { wrong(); inp.value = ''; inp.focus(); }
+        });
+    });
+    forms.setup.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var p1 = $('lkSetupPw1').value, p2 = $('lkSetupPw2').value;
+        if (p1.length < MIN_LEN) { setMsg('รหัสผ่านต้องมีอย่างน้อย ' + MIN_LEN + ' ตัวอักษร', false); shake(); return; }
+        if (p1 !== p2) { setMsg('รหัสผ่านสองช่องไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง', false); shake(); return; }
+        busy(forms.setup, true);
+        makeRecord(p1).then(function (rec) { write(rec); busy(forms.setup, false); unlock(); });
+    });
+    forms.change.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (tooSoon()) return;
+        var o = $('lkOldPw').value, p1 = $('lkNewPw1').value, p2 = $('lkNewPw2').value;
+        busy(forms.change, true);
+        checkPw(o).then(function (ok) {
+            if (!ok) { busy(forms.change, false); wrong(); $('lkOldPw').value = ''; $('lkOldPw').focus(); return; }
+            if (p1.length < MIN_LEN) { busy(forms.change, false); setMsg('รหัสผ่านใหม่ต้องมีอย่างน้อย ' + MIN_LEN + ' ตัวอักษร', false); shake(); return; }
+            if (p1 !== p2) { busy(forms.change, false); setMsg('รหัสผ่านใหม่สองช่องไม่ตรงกัน', false); shake(); return; }
+            return makeRecord(p1).then(function (rec) {
+                write(rec); busy(forms.change, false);
+                try { localStorage.removeItem(FAILKEY); } catch (x) {}
+                show('login', 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว กรุณาเข้าสู่ระบบด้วยรหัสใหม่', true);
+            });
+        });
+    });
+    screenEl.addEventListener('click', function (e) {
+        var eye = e.target.closest && e.target.closest('[data-eye]');
+        if (eye) {
+            var inp = $(eye.getAttribute('data-eye')); var show_ = inp.type === 'password';
+            inp.type = show_ ? 'text' : 'password';
+            eye.firstElementChild.className = show_ ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+            inp.focus(); return;
+        }
+        var go = e.target.closest && e.target.closest('[data-go]');
+        if (go) show(go.getAttribute('data-go'));
+    });
+
+    // ล็อกอัตโนมัติเมื่อไม่มีการใช้งาน (ออดตามตารางยังทำงานต่อได้ตามปกติ)
+    ['pointerdown', 'keydown', 'touchstart', 'wheel', 'mousemove'].forEach(function (ev) {
+        document.addEventListener(ev, function () { if (!locked) lastActive = Date.now(); }, { passive: true, capture: true });
+    });
+    if (AUTO_LOCK_MIN > 0) {
+        setInterval(function () {
+            if (!locked && read() && Date.now() - lastActive > AUTO_LOCK_MIN * 60000) lock('ล็อกหน้าจออัตโนมัติ เพราะไม่มีการใช้งานสักพัก');
+        }, 15000);
+    }
+
+    window.lockApp = function () { if (!locked) lock(); };
+    try {
+        locked = true; document.body.classList.add('lk-open');
+        show(read() ? 'login' : 'setup');
+        document.addEventListener('DOMContentLoaded', function () { if (locked) setInert(true); });
+    } catch (err) { // ถ้าระบบล็อกมีปัญหา อย่าให้เข้าใช้งานไม่ได้
+        console.error('lock init failed', err);
+        screenEl.classList.remove('show'); document.body.classList.remove('lk-open'); locked = false;
+    }
+})();
+</script>
+
 <div id="bootSplash" role="status" aria-live="polite" aria-label="กำลังเตรียมข้อมูลเสียง">
     <div class="bs-card">
         <div class="bs-stage">
@@ -1004,6 +1270,9 @@
             <button id="soundSwitchBtn" type="button" role="switch" aria-checked="true" onclick="toggleSoundSwitch()" class="status-switch sound-switch" title="เปิด/ปิดเสียงลำโพงทั้งระบบ — เมื่อปิด เสียงที่กำลังเล่นจะหยุดทันทีและออดอัตโนมัติจะไม่ดัง">
                 <span id="soundSwitchText">เปิดเสียง</span>
                 <span class="hs-track"><span class="hs-knob"></span></span>
+            </button>
+            <button id="lockNowBtn" type="button" onclick="lockApp()" class="lock-pill" title="ล็อกหน้าจอ (ออดอัตโนมัติยังทำงานตามเวลา)">
+                <i class="fa-solid fa-lock"></i><span>ล็อก</span>
             </button>
         </div>
     </header>
