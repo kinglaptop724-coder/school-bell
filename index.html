@@ -64,7 +64,7 @@
         #installBar .ib-t b { display: block; font-size: 14px; }
         #installBar .ib-go { border: 0; background: #7655E8; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 16px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
         #installBar .ib-x { border: 0; background: transparent; color: #8A86A8; font-size: 18px; padding: 6px 8px; cursor: pointer; }
-        #installSheet { position: fixed; inset: 0; z-index: 80; display: none; align-items: flex-end; justify-content: center; background: rgba(30,20,80,.55); }
+        #installSheet { position: fixed; inset: 0; z-index: 400; display: none; align-items: flex-end; justify-content: center; background: rgba(30,20,80,.55); }
         #installSheet.show { display: flex; }
         #installSheet .is-card { width: 100%; max-width: 480px; background: #fff; border-radius: 22px 22px 0 0; padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); max-height: 85vh; overflow: auto; }
         #installSheet h3 { font-size: 17px; font-weight: 700; color: #3C277E; margin-bottom: 10px; }
@@ -1036,6 +1036,8 @@
         .lk-btn:disabled { opacity:.6; cursor:wait; }
         .lk-link { align-self:center; border:0; background:none; color:#6140CC; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; padding:6px 10px; border-radius:10px; }
         .lk-link:hover { background:#F5F2FF; }
+        .lk-install { height:48px; border:1.5px solid #D6CCFC; border-radius:16px; background:#fff; color:#6140CC; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .lk-install:hover { background:#F5F2FF; }
         .lk-note { margin:6px 0 0; font-size:12.5px; line-height:1.5; color:#8A86A8; text-align:center; }
         .lk-note i { color:#F5B52B; margin-right:6px; }
         .lk-msg { margin:14px 0 0; font-size:14px; font-weight:600; line-height:1.5; min-height:0; }
@@ -1066,6 +1068,7 @@
                 <button type="button" class="lk-eye" data-eye="lkLoginPw" aria-label="แสดง/ซ่อนรหัสผ่าน"><i class="fa-regular fa-eye"></i></button>
             </div>
             <button type="submit" class="lk-btn">เข้าสู่ระบบ</button>
+            <button type="button" id="lkInstallBtn" class="lk-install" onclick="installApp()"><i class="fa-solid fa-download"></i>ติดตั้งแอปลงมือถือ</button>
             <p class="lk-note"><i class="fa-solid fa-bell"></i>ออดอัตโนมัติยังทำงานตามเวลาปกติ แม้หน้านี้จะล็อกอยู่</p>
         </form>
 
@@ -1169,7 +1172,7 @@
     }
     function setInert(on) {
         [].forEach.call(document.body.children, function (el) {
-            if (el === screenEl || el.id === 'broadcastBanner' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+            if (el === screenEl || el.id === 'broadcastBanner' || el.id === 'installSheet' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
             if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert');
         });
     }
@@ -4533,6 +4536,7 @@
         function hideInstallUI() {
             const b = installBarEl(); if (b) b.classList.remove('show');
             const h = document.getElementById('installHeadBtn'); if (h) h.style.display = 'none';
+            const l = document.getElementById('lkInstallBtn'); if (l) l.style.display = 'none';
             const c = document.getElementById('installCardBtn'); if (c) c.disabled = true;
             const n = document.getElementById('installCardNote'); if (n) n.textContent = 'ติดตั้งแล้ว ✅ (เปิดจากไอคอนบนหน้าจอ)';
         }
