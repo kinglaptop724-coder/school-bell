@@ -4581,7 +4581,7 @@
         window.addEventListener('appinstalled', () => { deferredInstall = null; hideInstallUI(); });
         window.addEventListener('load', () => {
             if (isStandalone()) { hideInstallUI(); return; }
-            if (IS_IOS || IS_INAPP) maybeShowInstallBar();
+            maybeShowInstallBar(); // มือถือทุกเครื่องเห็นแถบติดตั้งหลังเข้าสู่ระบบ (Android ถ้าเบราว์เซอร์ยังไม่พร้อมจะแสดงขั้นตอนติดตั้งด้วยมือ)
         });
 
         window.onload = function () {
