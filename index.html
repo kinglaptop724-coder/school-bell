@@ -921,7 +921,27 @@
             .status-switch { padding-left: 9px; font-size: 11.5px; }
         }
     </style>
-</head>
+<style id="onair-ui">
+        body #broadcastBanner { position:fixed; top:calc(18px + env(safe-area-inset-top, 0px)); left:50%; right:auto; transform:translateX(-50%); width:min(520px, calc(100vw - 24px)); z-index:85; padding:0 !important; background:transparent !important; background-image:none !important; border:0 !important; border-radius:0; box-shadow:none; }
+        body #broadcastBanner:not(.hidden) { animation:onair-in .28s cubic-bezier(.2,.9,.3,1.2); }
+        @keyframes onair-in { from { opacity:0; transform:translate(-50%,-18px) scale(.96); } to { opacity:1; transform:translate(-50%,0) scale(1); } }
+        .onair-card { background:#fff; border:1.5px solid #D6CCFC; border-radius:24px; padding:16px 18px 18px; box-shadow:0 24px 50px -16px rgba(60,39,126,.55), 0 0 0 6px rgba(139,107,246,.12); }
+        .onair-top { display:flex; align-items:center; gap:8px; font-size:13px; color:#6B6788; }
+        .onair-dot { width:10px; height:10px; border-radius:50%; background:#E11D48; animation:pulse-record 1.3s infinite; flex-shrink:0; }
+        .onair-tag { font-weight:800; letter-spacing:.08em; color:#BE123C; background:#FFE4E9; padding:1px 10px; border-radius:999px; font-size:12px; }
+        .onair-body { display:flex; align-items:center; gap:14px; margin-top:12px; }
+        .onair-eq { width:56px; height:56px; border-radius:18px; background:#7655E8; display:flex; align-items:center; justify-content:center; gap:4px; flex-shrink:0; box-shadow:0 10px 20px -10px rgba(118,85,232,.8); }
+        body .onair-eq .eq-bar { background:#fff !important; width:4px; }
+        .onair-msg { font-size:19px; font-weight:700; line-height:1.4; color:#2E2A4A; min-width:0; word-break:break-word; }
+        .onair-stop { margin-top:14px; width:100%; height:50px; border:0; border-radius:16px; background:#E11D48; color:#fff; font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; transition:background-color .15s, transform .1s; }
+        .onair-stop:hover { background:#BE123C; }
+        .onair-stop:active { transform:scale(.98); }
+        @media (max-width:640px) {
+            body #broadcastBanner { width:calc(100vw - 20px); }
+            .onair-msg { font-size:17px; }
+        }
+    </style>
+    </head>
 <body class="selection:bg-violet-200 selection:text-slate-900">
 <div id="bootSplash" role="status" aria-live="polite" aria-label="กำลังเตรียมข้อมูลเสียง">
     <div class="bs-card">
@@ -979,21 +999,23 @@
         </div>
     </header>
 
-    <!-- ON-AIR BAR -->
-    <div id="broadcastBanner" class="hidden bg-sky-50 border-b border-sky-100 text-slate-800 px-4 lg:px-8 py-2.5 transition-all">
-        <div class="flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3 min-w-0">
-                <div id="headerEqualizer" class="flex items-center gap-1 px-2.5 py-1 bg-white rounded-xl border border-sky-100 h-8 playing shrink-0">
+    <!-- ON-AIR POPUP (กล่องแจ้งเตือนตอนมีการเล่นเสียง) -->
+    <div id="broadcastBanner" class="hidden" role="status" aria-live="polite">
+        <div class="onair-card">
+            <div class="onair-top">
+                <span class="onair-dot"></span>
+                <span class="onair-tag">ON AIR</span>
+                <span class="onair-sub">กำลังส่งเสียงออกลำโพงโรงเรียน</span>
+            </div>
+            <div class="onair-body">
+                <div id="headerEqualizer" class="onair-eq playing">
                     <div class="eq-bar eq-bar-1"></div><div class="eq-bar eq-bar-2"></div><div class="eq-bar eq-bar-3"></div>
                     <div class="eq-bar eq-bar-4"></div><div class="eq-bar eq-bar-5"></div><div class="eq-bar eq-bar-6"></div>
                 </div>
-                <div class="min-w-0">
-                    <span class="text-xs font-bold tracking-wider text-sky-700 block"><span class="inline-block w-2 h-2 rounded-full bg-rose-500 mr-2 animate-pulse"></span>ON AIR · กำลังส่งสัญญาณเสียงออกลำโพงโรงเรียน</span>
-                    <span id="broadcastMessage" class="text-xs sm:text-sm font-bold text-slate-800 block truncate">กำลังส่งสัญญาณเสียง...</span>
-                </div>
+                <div id="broadcastMessage" class="onair-msg">กำลังส่งสัญญาณเสียง...</div>
             </div>
-            <button onclick="stopAllAudio()" class="px-3.5 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold transition shrink-0 cursor-pointer">
-                <i class="fa-solid fa-stop mr-1"></i>หยุดเล่นทันที
+            <button type="button" onclick="stopAllAudio()" class="onair-stop">
+                <i class="fa-solid fa-stop"></i>หยุดเล่นทันที
             </button>
         </div>
     </div>
