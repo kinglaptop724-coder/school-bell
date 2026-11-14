@@ -1002,13 +1002,12 @@
         <p class="lk-school">โรงเรียนอนุบาลชุมชนหนองบัวแดง</p>
 
         <form id="lkLogin" class="lk-form" hidden autocomplete="off">
-            <label class="lk-label" for="lkLoginPw"><i class="fa-solid fa-lock"></i>ใส่รหัสผ่านเพื่อเข้าใช้งาน</label>
+            <label class="lk-label" for="lkLoginPw"><i class="fa-solid fa-lock"></i>ใส่รหัสตรวจสอบเพื่อเข้าใช้งาน</label>
             <div class="lk-field">
-                <input id="lkLoginPw" type="password" autocomplete="current-password" placeholder="รหัสผ่าน" required>
+                <input id="lkLoginPw" type="password" autocomplete="current-password" placeholder="รหัสตรวจสอบ" required>
                 <button type="button" class="lk-eye" data-eye="lkLoginPw" aria-label="แสดง/ซ่อนรหัสผ่าน"><i class="fa-regular fa-eye"></i></button>
             </div>
             <button type="submit" class="lk-btn">เข้าสู่ระบบ</button>
-            <button type="button" class="lk-link" data-go="change">เปลี่ยนรหัสผ่าน</button>
             <p class="lk-note"><i class="fa-solid fa-bell"></i>ออดอัตโนมัติยังทำงานตามเวลาปกติ แม้หน้านี้จะล็อกอยู่</p>
         </form>
 
@@ -1057,6 +1056,7 @@
     var KEY = 'nongbuadaeng_lock_v1', FAILKEY = 'nongbuadaeng_lock_fail';
     var AUTO_LOCK_MIN = 10;   // ล็อกอัตโนมัติเมื่อไม่มีใครใช้งานกี่นาที (0 = ปิด)
     var MAX_FAILS = 5, WAIT_SEC = 30, MIN_LEN = 4;
+    var FIXED_CODE = 'cbd';   // รหัสเข้าใช้งานตายตัว (ไม่มีระบบตั้งรหัสผ่านเอง)
     var $ = function (id) { return document.getElementById(id); };
     var screenEl = $('lockScreen');
     var forms = { setup: $('lkSetup'), login: $('lkLogin'), change: $('lkChange') };
@@ -1115,7 +1115,7 @@
         locked = true;
         screenEl.classList.add('show'); document.body.classList.add('lk-open');
         setInert(true);
-        show(read() ? 'login' : 'setup', msg);
+        show('login', msg);
     }
     function unlock() {
         locked = false; lastActive = Date.now();
@@ -1135,8 +1135,7 @@
         return st;
     }
     function checkPw(pw) {
-        var rec = read(); if (!rec) return Promise.resolve(false);
-        return hashPw(pw, rec.salt, rec.algo).then(function (h) { return h === rec.hash; });
+        return Promise.resolve(String(pw || '').trim().toLowerCase() === FIXED_CODE);
     }
     function tooSoon() {
         var w = waitLeft();
@@ -1146,7 +1145,7 @@
     function wrong() {
         var st = registerFail();
         var w = waitLeft();
-        setMsg(w ? 'ใส่รหัสผิดหลายครั้ง กรุณารออีก ' + w + ' วินาที' : 'รหัสผ่านไม่ถูกต้อง ลองใหม่อีกครั้ง', false);
+        setMsg(w ? 'ใส่รหัสผิดหลายครั้ง กรุณารออีก ' + w + ' วินาที' : 'รหัสไม่ถูกต้อง ลองใหม่อีกครั้ง', false);
         shake();
     }
 
@@ -1202,14 +1201,14 @@
     });
     if (AUTO_LOCK_MIN > 0) {
         setInterval(function () {
-            if (!locked && read() && Date.now() - lastActive > AUTO_LOCK_MIN * 60000) lock('ล็อกหน้าจออัตโนมัติ เพราะไม่มีการใช้งานสักพัก');
+            if (!locked && Date.now() - lastActive > AUTO_LOCK_MIN * 60000) lock('ล็อกหน้าจออัตโนมัติ เพราะไม่มีการใช้งานสักพัก');
         }, 15000);
     }
 
     window.lockApp = function () { if (!locked) lock(); };
     try {
         locked = true; document.body.classList.add('lk-open');
-        show(read() ? 'login' : 'setup');
+        show('login');
         document.addEventListener('DOMContentLoaded', function () { if (locked) setInert(true); });
     } catch (err) { // ถ้าระบบล็อกมีปัญหา อย่าให้เข้าใช้งานไม่ได้
         console.error('lock init failed', err);
@@ -1724,7 +1723,7 @@
                                     <div>
                                         <div class="opt-label mb-1.5"><i class="fa-solid fa-desktop text-slate-400"></i>ใช้บนคอมโรงเรียน (เครื่องที่ตีออด)</div>
                                         <div class="flex items-center gap-2 bg-white px-3 py-2.5 rounded-xl border border-slate-200">
-                                            <input id="pushKeyInput" type="password" autocomplete="off" placeholder="รหัสแจ้งเตือน (BELL_KEY)" onchange="savePushSettings()" class="w-full text-sm bg-transparent focus:outline-none text-slate-700">
+                                            <input id="pushKeyInput" type="password" autocomplete="off" placeholder="รหัสแจ้งเตือน (ค่าเริ่มต้น cbd ไม่ต้องกรอก)" onchange="savePushSettings()" class="w-full text-sm bg-transparent focus:outline-none text-slate-700">
                                         </div>
                                         <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:14px;cursor:pointer">
                                             <input id="pushSendToggle" type="checkbox" onchange="savePushSettings()" style="width:18px;height:18px">
@@ -4361,6 +4360,7 @@
         };
         const VAPID_KEY = "BFaFmflzzUW2hvV2mvPu7CEcA0uz94zo_Bl-fK1EE81EWNkaCcMiHwTRlzcTBbSR2Kazg7hhpUoP4-XDER1KQX4";
         const PUSH_API_URL = "https://script.google.com/macros/s/AKfycbxIIp1NEe1GrPiaFFpUSJEI6DC3LUMws9BDN6PJIDmLhBIMPSmUY6hGqo318fj7GzovYQ/exec";
+        const PUSH_KEY_DEFAULT = 'cbd'; // รหัสแจ้งเตือน ต้องตรงกับ BELL_KEY ใน Apps Script
         const PUSH_KEY_LS = 'nongbuadaeng_push_key', PUSH_SEND_LS = 'nongbuadaeng_push_send';
 
         function pushApi(payload) {
@@ -4370,7 +4370,7 @@
                 body: JSON.stringify(payload)
             }).then(r => r.json());
         }
-        function getPushKey() { try { return localStorage.getItem(PUSH_KEY_LS) || ''; } catch (e) { return ''; } }
+        function getPushKey() { try { return localStorage.getItem(PUSH_KEY_LS) || PUSH_KEY_DEFAULT; } catch (e) { return PUSH_KEY_DEFAULT; } }
         function loadPushSettings() {
             const k = document.getElementById('pushKeyInput'), t = document.getElementById('pushSendToggle');
             if (k) k.value = getPushKey();
