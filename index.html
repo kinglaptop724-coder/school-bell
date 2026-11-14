@@ -5084,6 +5084,7 @@
                 rmRxOn = rmRole === 'pc' && localStorage.getItem(RM_RX_LS) === '1';
             } catch (e) { rmRole = 'phone'; rmRxOn = false; }
             rmRender();
+            rmLoadChime();
             if (rmRole === 'pc' && rmRxOn) startRemoteRx();
             rmStatusTimer = setInterval(() => {
                 if (rmRole === 'phone' && document.visibilityState === 'visible' && rmTabActive()) rmRefreshStatus();
@@ -5358,29 +5359,44 @@
         let rmRecTimer = null, rmRecing = false, rmRecCancel = false, rmRecMime = 'audio/webm', rmLastVoice = null;
 
         /* ---------- เสียงนำก่อนประกาศ (ปุ่มเลือก) ---------- */
+        const RM_CHIME_LS = 'nongbuadaeng_remote_chime';
         let rmChimeSel = 'pre_pa', rmChimeLibId = null;
-        function rmPickChime(c) {
-            rmChimeSel = c;
+        function rmSaveChime() {
+            try { localStorage.setItem(RM_CHIME_LS, JSON.stringify({ sel: rmChimeSel, lib: rmChimeLibId })); } catch (e) {}
+        }
+        // โหลดตัวเลือกเสียงนำที่เลือกไว้ครั้งก่อน (เรียกตอนเปิดหน้า)
+        function rmLoadChime() {
+            try {
+                const o = JSON.parse(localStorage.getItem(RM_CHIME_LS) || 'null');
+                if (o && ['pre_pa', 'chime_soft', 'none', 'lib'].indexOf(o.sel) >= 0) {
+                    rmChimeSel = o.sel;
+                    rmChimeLibId = (typeof o.lib === 'string' && o.lib) ? o.lib : null;
+                }
+            } catch (e) {}
+            rmApplyChimeUI();
+        }
+        function rmApplyChimeUI() {
             document.querySelectorAll('#rmChimeBtns button').forEach(b => {
-                const on = b.dataset.chime === c;
+                const on = b.dataset.chime === rmChimeSel;
                 b.classList.toggle('on', on);
                 b.setAttribute('aria-checked', on ? 'true' : 'false');
             });
             rmRenderChimeLib();
         }
-        function rmPickChimeLib(id) { rmChimeLibId = id; rmRenderChimeLib(); }
+        function rmPickChime(c) { rmChimeSel = c; rmSaveChime(); rmApplyChimeUI(); }
+        function rmPickChimeLib(id) { rmChimeLibId = id; rmSaveChime(); rmRenderChimeLib(); }
         function rmRenderChimeLib() {
             const box = $id('rmChimeLib'); if (!box) return;
             box.classList.toggle('hidden', rmChimeSel !== 'lib');
             if (rmChimeSel !== 'lib') return;
             const list = (typeof rmLastLibList !== 'undefined' && Array.isArray(rmLastLibList)) ? rmLastLibList : [];
             if (!list.length) { box.innerHTML = '<div class="rm-chime-empty">ยังไม่มีไฟล์ในคลังของคอมโรงเรียน (รอคอมเชื่อมต่อ หรือเพิ่มไฟล์ที่แท็บ "คลังเสียง" บนคอม)</div>'; return; }
-            if (!list.some(f => f.id === rmChimeLibId)) rmChimeLibId = null;
             box.innerHTML = list.map(f => `<button type="button" class="${f.id === rmChimeLibId ? 'on' : ''}" onclick="rmPickChimeLib('${escapeHtml(f.id)}')" title="${escapeHtml(f.name)}"><i class="fa-solid fa-music"></i><span>${escapeHtml(f.name)}</span></button>`).join('');
         }
         function rmGetChime() {
             if (rmChimeSel === 'lib') {
-                if (!rmChimeLibId) { showToast('เลือกไฟล์เสียงจากคอมสำหรับเสียงนำก่อน', 'warn', { title: 'ยังไม่ได้เลือกไฟล์' }); return null; }
+                const have = (typeof rmLastLibList !== 'undefined' && Array.isArray(rmLastLibList) && rmLastLibList.length) ? rmLastLibList.some(f => f.id === rmChimeLibId) : true;
+                if (!rmChimeLibId || !have) { showToast('เลือกไฟล์เสียงจากคอมสำหรับเสียงนำก่อน', 'warn', { title: 'ยังไม่ได้เลือกไฟล์' }); return null; }
                 return { chime: 'lib', cid: rmChimeLibId };
             }
             return { chime: rmChimeSel };
