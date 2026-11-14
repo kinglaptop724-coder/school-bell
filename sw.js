@@ -1,8 +1,10 @@
 /* Service Worker - ระบบออดโรงเรียน (ใช้งานออฟไลน์ได้เต็มรูปแบบ)
  * แคชไฟล์ทั้งหมดของแอปไว้ตอนเปิดครั้งแรก แล้วเปิดจากแคชก่อนเสมอ
  * พร้อมอัปเดตเวอร์ชันใหม่เงียบๆ เมื่อมีอินเทอร์เน็ต (เห็นผลเมื่อเปิดหน้าใหม่รอบถัดไป) */
-const VERSION = 'remote-4';
+const VERSION = 'remote-5';
 const CACHE = 'school-bell-' + VERSION;
+const LOGO_URL = 'https://i.postimg.cc/LsYtytm1/logo-rong-re-yn.png';
+const LOGO_CACHE = 'school-logo'; // แยกจากแคชหลัก เพื่อไม่ถูกลบตอนอัปเดตเวอร์ชัน
 const PRECACHE = [
   "./",
   "icons/icon-192.png",
@@ -49,6 +51,14 @@ self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+  // โลโก้โรงเรียน (อยู่นอกโดเมน): เก็บแคชไว้หลังโหลดครั้งแรก เพื่อให้แสดงได้แม้ไม่มีอินเทอร์เน็ต
+  if (req.url === LOGO_URL) {
+    event.respondWith(caches.open(LOGO_CACHE).then((c) => c.match(req).then((hit) => hit || fetch(req).then((res) => {
+      if (res && (res.ok || res.type === 'opaque')) c.put(req, res.clone());
+      return res;
+    }))));
+    return;
+  }
   // ไม่ยุ่งกับคำขอข้ามโดเมน (เช่น Gemini API) และไฟล์เสียง/วิดีโอที่ใช้ Range
   if (url.origin !== self.location.origin) return;
   if (req.headers.has('range')) return;
