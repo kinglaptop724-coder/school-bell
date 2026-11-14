@@ -691,50 +691,50 @@
     </style>
 
     <style id="relay-ui">
-        #relayCard { background:#FAF9FF; border:1.5px solid var(--line,#E6E2F8); border-radius:22px; padding:18px; transition:background-color .2s, border-color .2s; }
-        #relayCard .rl-main { display:flex; align-items:center; gap:18px; }
-        #relayCard .rl-btn { width:84px; height:84px; border-radius:50%; flex-shrink:0; border:0; cursor:pointer; background:#E11D48; color:#fff; font-size:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 8px #FFE4E9; transition:transform .15s, box-shadow .2s, background-color .2s; }
-        #relayCard .rl-btn:hover { transform:scale(1.04); }
-        #relayCard .rl-btn:active { transform:scale(.96); }
-        #relayCard .rl-text { flex:1; min-width:0; }
-        #relayCard .rl-title-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-        #relayCard .rl-title { font-size:20px; font-weight:700; color:#2E2A4A; line-height:1.3; }
-        #relayCard .rl-timer { font-size:16px; font-weight:700; color:#BE123C; background:#FFE4E9; padding:2px 12px; border-radius:999px; font-variant-numeric:tabular-nums; }
-        #relayCard .rl-timer.hidden { display:none; }
-        #relayCard .rl-sub { margin:4px 0 0; font-size:14px; color:#6B6788; line-height:1.5; }
-        #relayCard .rl-replay { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 16px; border-radius:999px; background:#fff; color:#4E33A3; border:1.5px solid #D6CCFC; font-size:14px; font-weight:600; cursor:pointer; flex-shrink:0; transition:background-color .15s; }
-        #relayCard .rl-replay:hover:not(:disabled) { background:#F5F2FF; }
-        #relayCard .rl-replay:disabled { opacity:.45; cursor:not-allowed; }
-        #relayCard .rl-steps { list-style:none; margin:16px 0 0; padding:14px 0 0; border-top:1px dashed #D9D2FA; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-        #relayCard .rl-steps li { display:flex; align-items:center; justify-content:center; gap:8px; color:#9591B3; transition:color .2s; }
-        #relayCard .rl-steps em { font-style:normal; font-size:14px; font-weight:600; }
-        #relayCard .rl-no { width:26px; height:26px; border-radius:50%; background:#EAE7F8; color:#8A86A8; display:inline-flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; transition:background-color .2s, color .2s; }
-        #relayCard .rl-no i { display:none; font-size:11px; }
-        #relayCard .rl-steps li.is-active { color:#2E2A4A; }
-        #relayCard .rl-steps li.is-active .rl-no { background:#7655E8; color:#fff; }
-        #relayCard .rl-steps li.is-done { color:#15803D; }
-        #relayCard .rl-steps li.is-done .rl-no { background:#16A34A; color:#fff; }
-        #relayCard .rl-steps li.is-done .rl-no b { display:none; }
-        #relayCard .rl-steps li.is-done .rl-no i { display:block; }
+        #relayCard, #rmRelayCard { background:#FAF9FF; border:1.5px solid var(--line,#E6E2F8); border-radius:22px; padding:18px; transition:background-color .2s, border-color .2s; }
+        #relayCard .rl-main, #rmRelayCard .rl-main { display:flex; align-items:center; gap:18px; }
+        #relayCard .rl-btn, #rmRelayCard .rl-btn { width:84px; height:84px; border-radius:50%; flex-shrink:0; border:0; cursor:pointer; background:#E11D48; color:#fff; font-size:32px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 8px #FFE4E9; transition:transform .15s, box-shadow .2s, background-color .2s; }
+        #relayCard .rl-btn:hover, #rmRelayCard .rl-btn:hover { transform:scale(1.04); }
+        #relayCard .rl-btn:active, #rmRelayCard .rl-btn:active { transform:scale(.96); }
+        #relayCard .rl-text, #rmRelayCard .rl-text { flex:1; min-width:0; }
+        #relayCard .rl-title-row, #rmRelayCard .rl-title-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        #relayCard .rl-title, #rmRelayCard .rl-title { font-size:20px; font-weight:700; color:#2E2A4A; line-height:1.3; }
+        #relayCard .rl-timer, #rmRelayCard .rl-timer { font-size:16px; font-weight:700; color:#BE123C; background:#FFE4E9; padding:2px 12px; border-radius:999px; font-variant-numeric:tabular-nums; }
+        #relayCard .rl-timer.hidden, #rmRelayCard .rl-timer.hidden { display:none; }
+        #relayCard .rl-sub, #rmRelayCard .rl-sub { margin:4px 0 0; font-size:14px; color:#6B6788; line-height:1.5; }
+        #relayCard .rl-replay, #rmRelayCard .rl-replay { display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 16px; border-radius:999px; background:#fff; color:#4E33A3; border:1.5px solid #D6CCFC; font-size:14px; font-weight:600; cursor:pointer; flex-shrink:0; transition:background-color .15s; }
+        #relayCard .rl-replay:hover:not(:disabled), #rmRelayCard .rl-replay:hover:not(:disabled) { background:#F5F2FF; }
+        #relayCard .rl-replay:disabled, #rmRelayCard .rl-replay:disabled { opacity:.45; cursor:not-allowed; }
+        #relayCard .rl-steps, #rmRelayCard .rl-steps { list-style:none; margin:16px 0 0; padding:14px 0 0; border-top:1px dashed #D9D2FA; display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+        #relayCard .rl-steps li, #rmRelayCard .rl-steps li { display:flex; align-items:center; justify-content:center; gap:8px; color:#9591B3; transition:color .2s; }
+        #relayCard .rl-steps em, #rmRelayCard .rl-steps em { font-style:normal; font-size:14px; font-weight:600; }
+        #relayCard .rl-no, #rmRelayCard .rl-no { width:26px; height:26px; border-radius:50%; background:#EAE7F8; color:#8A86A8; display:inline-flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; transition:background-color .2s, color .2s; }
+        #relayCard .rl-no i, #rmRelayCard .rl-no i { display:none; font-size:11px; }
+        #relayCard .rl-steps li.is-active, #rmRelayCard .rl-steps li.is-active { color:#2E2A4A; }
+        #relayCard .rl-steps li.is-active .rl-no, #rmRelayCard .rl-steps li.is-active .rl-no { background:#7655E8; color:#fff; }
+        #relayCard .rl-steps li.is-done, #rmRelayCard .rl-steps li.is-done { color:#15803D; }
+        #relayCard .rl-steps li.is-done .rl-no, #rmRelayCard .rl-steps li.is-done .rl-no { background:#16A34A; color:#fff; }
+        #relayCard .rl-steps li.is-done .rl-no b, #rmRelayCard .rl-steps li.is-done .rl-no b { display:none; }
+        #relayCard .rl-steps li.is-done .rl-no i, #rmRelayCard .rl-steps li.is-done .rl-no i { display:block; }
 
         /* กำลังอัด */
-        #relayCard[data-state="recording"] { background:#FFF5F7; border-color:#FDA4AF; }
-        #relayCard[data-state="recording"] .rl-btn { border-radius:22px; animation:pulse-record 1.3s infinite; }
-        #relayCard[data-state="recording"] .rl-title { color:#BE123C; }
+        #relayCard[data-state="recording"], #rmRelayCard[data-state="recording"] { background:#FFF5F7; border-color:#FDA4AF; }
+        #relayCard[data-state="recording"] .rl-btn, #rmRelayCard[data-state="recording"] .rl-btn { border-radius:22px; animation:pulse-record 1.3s infinite; }
+        #relayCard[data-state="recording"] .rl-title, #rmRelayCard[data-state="recording"] .rl-title { color:#BE123C; }
         /* กำลังประกาศ */
-        #relayCard[data-state="playing"] { background:#F0FDF4; border-color:#86EFAC; }
-        #relayCard[data-state="playing"] .rl-btn { background:#16A34A; box-shadow:0 0 0 8px #DCFCE7; }
-        #relayCard[data-state="playing"] .rl-title { color:#15803D; }
+        #relayCard[data-state="playing"], #rmRelayCard[data-state="playing"] { background:#F0FDF4; border-color:#86EFAC; }
+        #relayCard[data-state="playing"] .rl-btn, #rmRelayCard[data-state="playing"] .rl-btn { background:#16A34A; box-shadow:0 0 0 8px #DCFCE7; }
+        #relayCard[data-state="playing"] .rl-title, #rmRelayCard[data-state="playing"] .rl-title { color:#15803D; }
 
         @media (max-width:640px) {
-            #relayCard { padding:16px 14px; }
-            #relayCard .rl-main { flex-wrap:wrap; justify-content:center; text-align:center; gap:14px; }
-            #relayCard .rl-text { flex-basis:100%; order:2; }
-            #relayCard .rl-title-row { justify-content:center; }
-            #relayCard .rl-btn { order:1; width:96px; height:96px; font-size:36px; }
-            #relayCard .rl-replay { order:3; }
-            #relayCard .rl-steps li { flex-direction:column; gap:6px; text-align:center; }
-            #relayCard .rl-steps em { font-size:12px; }
+            #relayCard, #rmRelayCard { padding:16px 14px; }
+            #relayCard .rl-main, #rmRelayCard .rl-main { flex-wrap:wrap; justify-content:center; text-align:center; gap:14px; }
+            #relayCard .rl-text, #rmRelayCard .rl-text { flex-basis:100%; order:2; }
+            #relayCard .rl-title-row, #rmRelayCard .rl-title-row { justify-content:center; }
+            #relayCard .rl-btn, #rmRelayCard .rl-btn { order:1; width:96px; height:96px; font-size:36px; }
+            #relayCard .rl-replay, #rmRelayCard .rl-replay { order:3; }
+            #relayCard .rl-steps li, #rmRelayCard .rl-steps li { flex-direction:column; gap:6px; text-align:center; }
+            #relayCard .rl-steps em, #rmRelayCard .rl-steps em { font-size:12px; }
         }
     </style>
     <style id="pa-ui">
@@ -1929,19 +1929,70 @@
                             <button type="button" class="rm-bell" onclick="remoteBell('dismissal')"><i class="fa-solid fa-house"></i>เลิกเรียน</button>
                         </div>
 
-                        <div class="sec-title mb-2.5"><i class="fa-solid fa-comment-dots"></i>พิมพ์ข้อความให้คอมโรงเรียนพูด</div>
+                        <div class="sec-title mb-2.5"><i class="fa-solid fa-bullhorn"></i>ประกาศเสียงตามสายโดยไม่ต้องเดินไปจับไมค์</div>
                         <div class="rm-gap">
-                            <textarea id="rmText" rows="3" maxlength="300" placeholder="เช่น ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ" class="pa-textarea w-full rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-sky-500 focus:outline-none p-4 text-sm text-slate-800 placeholder-slate-400 leading-relaxed transition"></textarea>
-                            <div class="opt-card" style="margin-top:10px">
-                                <div class="opt-label"><i class="fa-solid fa-bell text-orange-500"></i>เสียงนำก่อนพูด</div>
+                            <div class="pa-modes">
+                                <button id="rmModeBtn_voice" type="button" onclick="rmSwitchMode('voice')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-white text-sky-700 shadow-2xs transition cursor-pointer flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-microphone-lines"></i>
+                                    <span class="pa-m-lbl"><span class="pa-m-no">1. </span><span class="pa-m-a">อัดเสียงประกาศ</span><span class="pa-m-b pa-m-mob">พูดแล้วส่งเข้าลำโพง</span></span>
+                                </button>
+                                <button id="rmModeBtn_tts" type="button" onclick="rmSwitchMode('tts')" class="py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-comment-dots"></i>
+                                    <span class="pa-m-lbl"><span class="pa-m-no">2. </span><span class="pa-m-a">พิมพ์ข้อความ</span> <span class="pa-m-b">ให้คอมโรงเรียนพูดแทน</span></span>
+                                </button>
+                            </div>
+
+                            <!-- โหมด 1: อัดเสียงบนมือถือ แล้วส่งไปเล่นที่ลำโพงคอมโรงเรียน -->
+                            <div id="rmModeVoice">
+                                <div id="rmRelayCard" data-state="idle">
+                                    <div class="rl-main">
+                                        <button id="rmRelayBtn" type="button" onclick="rmToggleRecord()" class="rl-btn" aria-label="อัดเสียงประกาศ">
+                                            <i id="rmRelayIcon" class="fa-solid fa-microphone"></i>
+                                        </button>
+                                        <div class="rl-text">
+                                            <div class="rl-title-row">
+                                                <span id="rmRelayTitle" class="rl-title">กดปุ่มไมค์ แล้วพูดได้เลย</span>
+                                                <span id="rmRelayTimer" class="rl-timer hidden">00:00</span>
+                                            </div>
+                                            <p id="rmRelayStatus" class="rl-sub">พูดจบแล้วกดอีกครั้ง ระบบจะส่งเสียงไปออกลำโพงโรงเรียนให้เอง</p>
+                                        </div>
+                                        <button id="rmRelayResend" type="button" onclick="rmResendVoice()" disabled class="rl-replay">
+                                            <i class="fa-solid fa-rotate-right"></i><span>ส่งซ้ำ</span>
+                                        </button>
+                                    </div>
+                                    <ol class="rl-steps">
+                                        <li data-step="1"><span class="rl-no"><b>1</b><i class="fa-solid fa-check"></i></span><em>กดไมค์แล้วพูด</em></li>
+                                        <li data-step="2"><span class="rl-no"><b>2</b><i class="fa-solid fa-check"></i></span><em>พูดจบ กดหยุด</em></li>
+                                        <li data-step="3"><span class="rl-no"><b>3</b><i class="fa-solid fa-check"></i></span><em>ลำโพงโรงเรียนเปิดเอง</em></li>
+                                    </ol>
+                                </div>
+                                <p class="rm-note">อัดได้ครั้งละไม่เกินประมาณ 25 วินาที · เสียงจะออกที่ลำโพงของคอมโรงเรียน ไม่ได้ออกที่มือถือ · ต้องอนุญาตให้ใช้ไมโครโฟน</p>
+                            </div>
+
+                            <!-- โหมด 2: พิมพ์ข้อความให้คอมพูด -->
+                            <div id="rmModeTts" class="hidden">
+                                <div class="pa-chips">
+                                    <span class="pa-chips-lbl">ข้อความสำเร็จรูป:</span>
+                                    <button type="button" onclick="rmUseTemplate('ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ ขอบคุณค่ะ')"><i class="fa-solid fa-users"></i>เรียกประชุมครู</button>
+                                    <button type="button" onclick="rmUseTemplate('ขอความร่วมมือนักเรียนทุกคนเข้าแถวอย่างเป็นระเบียบ ขอบคุณค่ะ')"><i class="fa-solid fa-child-reaching"></i>เรียกนักเรียน</button>
+                                    <button type="button" onclick="rmUseTemplate('ขอเรียนเชิญผู้ปกครองมาพบคุณครูที่ห้องประชาสัมพันธ์ในเวลานี้ค่ะ ขอบคุณค่ะ')"><i class="fa-solid fa-user-group"></i>เรียกผู้ปกครอง</button>
+                                    <button type="button" class="pa-chip-clear" onclick="rmUseTemplate('')"><i class="fa-solid fa-eraser"></i>ล้างข้อความ</button>
+                                </div>
+                                <textarea id="rmText" rows="3" maxlength="300" oninput="document.getElementById('rmCharCount').innerText = this.value.length + ' ตัวอักษร'" placeholder="เช่น ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ" class="pa-textarea w-full rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-sky-500 focus:outline-none p-4 text-sm text-slate-800 placeholder-slate-400 leading-relaxed transition"></textarea>
+                                <div class="text-xs text-slate-400 tabular-nums" id="rmCharCount" style="margin-top:6px;text-align:right">0 ตัวอักษร</div>
+                                <button type="button" onclick="remoteTts()" class="pa-send" style="margin-top:12px"><i class="fa-solid fa-paper-plane"></i><span>ส่งไปให้คอมโรงเรียนพูด</span></button>
+                                <p class="rm-note">ข้อความยาวได้ไม่เกิน 300 ตัวอักษร · ถ้าเปิดเสียง Gemini ไว้บนคอมโรงเรียน คอมจะใช้เสียงนั้นพูด</p>
+                            </div>
+
+                            <!-- ใช้ร่วมกันทั้งสองโหมด -->
+                            <div class="opt-card" style="margin-top:12px">
+                                <div class="opt-label"><i class="fa-solid fa-bell text-orange-500"></i>เสียงนำก่อนประกาศ</div>
                                 <select id="rmChime" class="w-full bg-transparent text-sm font-semibold text-slate-800 focus:outline-none cursor-pointer mt-1.5">
                                     <option value="pre_pa">ติ๊งต่อง 4 โน้ต</option>
                                     <option value="chime_soft">ระฆังนุ่มนวล</option>
-                                    <option value="none">ไม่มีเสียงนำ (พูดทันที)</option>
+                                    <option value="none">ไม่มีเสียงนำ (ประกาศทันที)</option>
                                 </select>
                             </div>
-                            <button type="button" onclick="remoteTts()" class="pa-send" style="margin-top:12px"><i class="fa-solid fa-paper-plane"></i><span>ส่งไปให้คอมโรงเรียนพูด</span></button>
-                            <p class="rm-note">ข้อความยาวได้ไม่เกิน 300 ตัวอักษร · ถ้าเปิดเสียง Gemini ไว้บนคอมโรงเรียน คอมจะใช้เสียงนั้นพูด</p>
                         </div>
 
                         <div class="sec-title mb-2.5"><i class="fa-solid fa-compact-disc"></i>เปิดไฟล์เสียงในคลังของคอมโรงเรียน</div>
@@ -2075,15 +2126,15 @@
             .pa-m-lbl .pa-m-mob { display:block; }
 
             /* การ์ดอัดเสียง */
-            #relayCard .rl-title { font-size:19px; text-wrap:balance; }
-            #relayCard .rl-sub { text-wrap:balance; padding:0 6px; }
-            #relayCard .rl-replay { min-width:160px; justify-content:center; }
-            #relayCard .rl-steps { padding-top:16px; gap:8px; }
-            #relayCard .rl-steps li { position:relative; align-items:center; }
-            #relayCard .rl-no { position:relative; z-index:1; width:28px; height:28px; }
-            #relayCard .rl-steps li + li::before { content:""; position:absolute; top:13px; left:calc(-50% - 8px); width:calc(100% + 8px); height:2px; border-radius:2px; background:#E3DEF7; }
-            #relayCard .rl-steps li.is-done + li::before { background:#16A34A; }
-            #relayCard .rl-steps em { font-size:12.5px; line-height:1.3; text-wrap:balance; }
+            #relayCard .rl-title, #rmRelayCard .rl-title { font-size:19px; text-wrap:balance; }
+            #relayCard .rl-sub, #rmRelayCard .rl-sub { text-wrap:balance; padding:0 6px; }
+            #relayCard .rl-replay, #rmRelayCard .rl-replay { min-width:160px; justify-content:center; }
+            #relayCard .rl-steps, #rmRelayCard .rl-steps { padding-top:16px; gap:8px; }
+            #relayCard .rl-steps li, #rmRelayCard .rl-steps li { position:relative; align-items:center; }
+            #relayCard .rl-no, #rmRelayCard .rl-no { position:relative; z-index:1; width:28px; height:28px; }
+            #relayCard .rl-steps li + li::before, #rmRelayCard .rl-steps li + li::before { content:""; position:absolute; top:13px; left:calc(-50% - 8px); width:calc(100% + 8px); height:2px; border-radius:2px; background:#E3DEF7; }
+            #relayCard .rl-steps li.is-done + li::before, #rmRelayCard .rl-steps li.is-done + li::before { background:#16A34A; }
+            #relayCard .rl-steps em, #rmRelayCard .rl-steps em { font-size:12.5px; line-height:1.3; text-wrap:balance; }
 
             /* แท็บพิมพ์ข้อความ: ปุ่มข้อความสำเร็จรูป 2 คอลัมน์ */
             .pa-chips { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -4833,6 +4884,7 @@
             const e = j && j.error;
             if (e === 'forbidden') return 'รหัสแจ้งเตือนไม่ถูกต้อง (ต้องตรงกับ BELL_KEY ใน Apps Script)';
             if (e === 'too fast') return 'กดถี่เกินไป รอสักครู่แล้วกดใหม่';
+            if (e === 'bad audio') return 'ไฟล์เสียงยาวเกินไปหรือไม่ถูกต้อง ลองพูดให้สั้นลง';
             if (e === 'bad data' || e === 'bad type') return 'รูปแบบคำสั่งไม่ถูกต้อง';
             return e ? ('ผิดพลาด: ' + e) : 'ส่งไม่สำเร็จ';
         }
@@ -4864,6 +4916,7 @@
 
         function setRemoteRole(role) {
             if (role !== 'phone' && role !== 'pc') return;
+            if (role === 'pc' && rmRecing) { rmRecCancel = true; rmStopRecord(); }
             rmRole = role;
             try { localStorage.setItem(RM_ROLE_LS, role); } catch (e) {}
             if (role === 'pc') { if (rmRxOn) startRemoteRx(); }
@@ -4962,6 +5015,9 @@
                     addActivityLog('📱 สั่งจากมือถือ: ประกาศ "' + text + '"');
                     if (d.chime === 'none') speakThaiText(text);
                     else playBell(d.chime === 'chime_soft' ? 'chime_soft' : 'pre_pa', text);
+                } else if (c.type === 'voice') {
+                    rmSetLast('ประกาศด้วยเสียงจากมือถือ (กำลังโหลดเสียง...)');
+                    rmPlayVoice(d);
                 } else if (c.type === 'lib') {
                     const f = libraryAudioFiles.find(x => rmShortId(x.id) === d.id);
                     if (!f) {
@@ -5042,18 +5098,19 @@
             };
             setTimeout(step, 3000);
         }
-        async function rmSend(type, data, label) {
-            if (!navigator.onLine) { showToast('มือถือไม่มีอินเทอร์เน็ต', 'err'); return; }
+        async function rmSend(type, data, label, extra) {
+            if (!navigator.onLine) { showToast('มือถือไม่มีอินเทอร์เน็ต', 'err'); return false; }
             const key = getPushKey();
-            if (!key) { showToast('ใส่รหัสแจ้งเตือนก่อน (หน้าประกาศเสียง → แจ้งเตือนบนมือถือ)', 'warn'); return; }
+            if (!key) { showToast('ใส่รหัสแจ้งเตือนก่อน (หน้าประกาศเสียง → แจ้งเตือนบนมือถือ)', 'warn'); return false; }
             let j;
-            try { j = await pushApi({ action: 'cmd_send', key, type, data }); }
-            catch (e) { showToast('ติดต่อเซิร์ฟเวอร์ไม่ได้ ลองใหม่อีกครั้ง', 'err'); return; }
-            if (!j || !j.ok) { showToast(rmErrText(j), 'err', { title: 'ส่งคำสั่งไม่สำเร็จ' }); return; }
+            try { j = await pushApi(Object.assign({ action: 'cmd_send', key, type, data }, extra || {})); }
+            catch (e) { showToast('ติดต่อเซิร์ฟเวอร์ไม่ได้ ลองใหม่อีกครั้ง', 'err'); return false; }
+            if (!j || !j.ok) { showToast(rmErrText(j), 'err', { title: 'ส่งคำสั่งไม่สำเร็จ' }); return false; }
             addActivityLog('📱 ส่งคำสั่งไปคอมโรงเรียน: ' + label);
             if (j.online) showToast(label, 'ok', { title: 'ส่งคำสั่งแล้ว' });
             else showToast('คอมโรงเรียนไม่ได้ออนไลน์ คำสั่งจะหมดอายุภายใน 90 วินาที', 'warn', { title: 'ส่งแล้ว แต่คอมออฟไลน์' });
             rmWatchAck(j.seq);
+            return true;
         }
         async function remoteBell(bell) {
             const name = getBellDisplayName(bell);
@@ -5073,6 +5130,172 @@
             const ok = await askConfirm({ title: 'สั่งเปิดไฟล์เสียงนี้?', text: name, okText: 'ส่งคำสั่ง', tone: 'info', icon: 'fa-play' });
             if (ok) rmSend('lib', { id }, 'เปิดไฟล์ ' + name);
         }
+        /* ---------- ประกาศเสียงตามสาย: อัดเสียงบนมือถือ -> ส่งไปเล่นที่ลำโพงคอมโรงเรียน ---------- */
+        const RM_VOICE_MAX_BYTES = 60000, RM_VOICE_MAX_B64 = 98000, RM_VOICE_MAX_SEC = 25;
+        let rmRec = null, rmRecStream = null, rmRecChunks = [], rmRecBytes = 0, rmRecSec = 0;
+        let rmRecTimer = null, rmRecing = false, rmRecCancel = false, rmRecMime = 'audio/webm', rmLastVoice = null;
+
+        function rmSwitchMode(m) {
+            const ON = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold bg-white text-sky-700 shadow-2xs transition cursor-pointer flex items-center justify-center gap-2';
+            const OFF = 'py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer flex items-center justify-center gap-2';
+            const v = (m === 'voice');
+            $id('rmModeBtn_voice').className = v ? ON : OFF;
+            $id('rmModeBtn_tts').className = v ? OFF : ON;
+            $id('rmModeVoice').classList.toggle('hidden', !v);
+            $id('rmModeTts').classList.toggle('hidden', v);
+        }
+        function rmUseTemplate(text) {
+            const t = $id('rmText');
+            t.value = text;
+            t.dispatchEvent(new Event('input'));
+            t.focus();
+        }
+        // สถานะการ์ดอัดเสียง: idle | recording | playing (กำลังส่ง) | done
+        function rmSetRelayUI(state, sub) {
+            const card = $id('rmRelayCard'); if (!card) return;
+            const T = {
+                idle:      ['กดปุ่มไมค์ แล้วพูดได้เลย', 'fa-microphone', 1],
+                recording: ['กำลังอัดเสียง… พูดได้เลย', 'fa-stop', 2],
+                playing:   ['กำลังส่งไปลำโพงโรงเรียน', 'fa-paper-plane', 3],
+                done:      ['ส่งเรียบร้อยแล้ว', 'fa-microphone', 0]
+            };
+            const S = {
+                idle:      'พูดจบแล้วกดอีกครั้ง ระบบจะส่งเสียงไปออกลำโพงโรงเรียนให้เอง',
+                recording: 'พูดจบแล้วกดปุ่มสี่เหลี่ยมเพื่อหยุด',
+                playing:   'คอมโรงเรียนจะเปิดเสียงนำ ตามด้วยเสียงของคุณครู',
+                done:      'กดไมค์เพื่ออัดใหม่ หรือกด "ส่งซ้ำ" เพื่อส่งเสียงล่าสุดอีกครั้ง'
+            };
+            const [title, icon, step] = T[state];
+            card.dataset.state = state;
+            $id('rmRelayTitle').innerText = title;
+            $id('rmRelayStatus').innerText = sub || S[state];
+            $id('rmRelayIcon').className = 'fa-solid ' + icon;
+            card.querySelectorAll('.rl-steps li').forEach(li => {
+                const n = +li.dataset.step;
+                li.classList.toggle('is-active', state === 'idle' ? n === 1 : n === step);
+                li.classList.toggle('is-done', state === 'done' ? true : n < step);
+            });
+        }
+        function rmBlobToB64(blob) {
+            return new Promise((res, rej) => {
+                const r = new FileReader();
+                r.onload = () => res(String(r.result).split(',')[1] || '');
+                r.onerror = () => rej(new Error('read failed'));
+                r.readAsDataURL(blob);
+            });
+        }
+        function rmStopRecord() {
+            rmRecing = false;
+            clearInterval(rmRecTimer);
+            try { if (rmRec && rmRec.state !== 'inactive') rmRec.stop(); } catch (e) {}
+        }
+        async function rmToggleRecord() {
+            if (rmRecing) { rmStopRecord(); return; }
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') {
+                rmSetRelayUI('idle', 'เบราว์เซอร์ไม่รองรับการอัดเสียง ลองใช้ Chrome (Android) หรือ Safari (iPhone)');
+                showToast('เบราว์เซอร์นี้ไม่รองรับการบันทึกเสียงจากไมโครโฟน', 'err');
+                return;
+            }
+            if (!navigator.onLine) { showToast('มือถือไม่มีอินเทอร์เน็ต', 'err'); return; }
+            if (!getPushKey()) { showToast('ใส่รหัสแจ้งเตือนก่อน (หน้าประกาศเสียง → แจ้งเตือนบนมือถือ)', 'warn'); return; }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                rmRecStream = stream;
+                const mt = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus']
+                    .find(m => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || '';
+                const opts = { audioBitsPerSecond: 16000 };
+                if (mt) opts.mimeType = mt;
+                rmRec = new MediaRecorder(stream, opts);
+                rmRecMime = String(rmRec.mimeType || mt || 'audio/webm').split(';')[0];
+                rmRecChunks = []; rmRecBytes = 0; rmRecSec = 0; rmRecCancel = false;
+                rmRec.ondataavailable = (e) => {
+                    if (!e.data || !e.data.size) return;
+                    rmRecChunks.push(e.data); rmRecBytes += e.data.size;
+                    if (rmRecing && rmRecBytes > RM_VOICE_MAX_BYTES) {
+                        showToast('เสียงยาวถึงขีดจำกัดแล้ว ระบบหยุดอัดให้อัตโนมัติ', 'warn', { title: 'หยุดอัดอัตโนมัติ' });
+                        rmStopRecord();
+                    }
+                };
+                rmRec.onstop = rmOnRecStop;
+                rmRec.start(1000);
+                rmRecing = true;
+                const tb = $id('rmRelayTimer');
+                tb.classList.remove('hidden'); tb.innerText = '00:00';
+                rmSetRelayUI('recording');
+                rmRecTimer = setInterval(() => {
+                    rmRecSec++;
+                    tb.innerText = formatAudioTime(rmRecSec);
+                    if (rmRecSec >= RM_VOICE_MAX_SEC) {
+                        showToast('ครบเวลาสูงสุดแล้ว ระบบหยุดอัดให้อัตโนมัติ', 'warn', { title: 'หยุดอัดอัตโนมัติ' });
+                        rmStopRecord();
+                    }
+                }, 1000);
+            } catch (err) {
+                rmRecing = false;
+                rmSetRelayUI('idle', 'กรุณากด "อนุญาต" ให้ใช้ไมโครโฟน แล้วลองกดอีกครั้ง');
+                showToast('กรุณาอนุญาตการใช้ไมโครโฟนในเบราว์เซอร์ เพื่อใช้อัดเสียงประกาศ', 'err', { title: 'ยังใช้ไมโครโฟนไม่ได้' });
+            }
+        }
+        async function rmOnRecStop() {
+            if (rmRecStream) { rmRecStream.getTracks().forEach(t => t.stop()); rmRecStream = null; }
+            $id('rmRelayTimer').classList.add('hidden');
+            const blob = new Blob(rmRecChunks, { type: rmRecMime });
+            if (rmRecCancel) { rmSetRelayUI('idle'); return; }
+            if (blob.size < 1500) { rmSetRelayUI('idle', 'เสียงสั้นเกินไป ลองกดไมค์แล้วพูดใหม่'); return; }
+            let b64 = '';
+            try { b64 = await rmBlobToB64(blob); } catch (e) {}
+            if (!b64 || b64.length > RM_VOICE_MAX_B64) {
+                rmSetRelayUI('idle', 'เสียงยาวเกินไป ลองพูดให้สั้นลง');
+                showToast('เสียงยาวเกินไป ลองพูดให้สั้นลงแล้วอัดใหม่', 'err');
+                return;
+            }
+            rmLastVoice = { audio: b64, mime: rmRecMime };
+            $id('rmRelayResend').disabled = false;
+            const ok = await askConfirm({ title: 'ส่งเสียงนี้ไปประกาศที่ลำโพงโรงเรียน?', text: `เสียงยาวประมาณ ${rmRecSec} วินาที ลำโพงจะดังทันทีตามเสียงนำที่เลือก`, okText: 'ส่งประกาศ', tone: 'info', icon: 'fa-bullhorn' });
+            if (!ok) { rmSetRelayUI('idle', 'ยังไม่ได้ส่ง กด "ส่งซ้ำ" เพื่อส่งเสียงที่อัดไว้ หรืออัดใหม่ได้เลย'); return; }
+            rmSendVoice();
+        }
+        async function rmSendVoice() {
+            if (!rmLastVoice) return;
+            rmSetRelayUI('playing');
+            const ok = await rmSend('voice', { mime: rmLastVoice.mime, chime: $id('rmChime').value }, 'ประกาศด้วยเสียงที่อัดไว้', { audio: rmLastVoice.audio });
+            rmSetRelayUI(ok ? 'done' : 'idle', ok ? undefined : 'ส่งไม่สำเร็จ กด "ส่งซ้ำ" เพื่อลองอีกครั้ง');
+        }
+        async function rmResendVoice() {
+            if (!rmLastVoice || rmRecing) return;
+            const ok = await askConfirm({ title: 'ส่งเสียงล่าสุดไปประกาศอีกครั้ง?', text: 'ลำโพงโรงเรียนจะดังทันที', okText: 'ส่งประกาศ', tone: 'info', icon: 'fa-bullhorn' });
+            if (ok) rmSendVoice();
+        }
+        /* ฝั่งคอมโรงเรียน: ดึงไฟล์เสียงที่มือถืออัดไว้ แล้วเปิดออกลำโพง */
+        async function rmPlayVoice(d) {
+            try {
+                const j = await pushApi({ action: 'cmd_audio', key: getPushKey(), id: d.aid });
+                if (!j || !j.ok || !j.audio) {
+                    rmSetLast('โหลดเสียงจากมือถือไม่สำเร็จ (' + ((j && j.error) || 'ไม่พบไฟล์') + ')');
+                    notifyWarn('โหลดเสียงประกาศจากมือถือไม่สำเร็จ ให้ลองส่งใหม่อีกครั้ง');
+                    return;
+                }
+                const bin = atob(j.audio), u8 = new Uint8Array(bin.length);
+                for (let k = 0; k < bin.length; k++) u8[k] = bin.charCodeAt(k);
+                const url = URL.createObjectURL(new Blob([u8], { type: j.mime || d.mime || 'audio/webm' }));
+                rmSetLast('ประกาศด้วยเสียงที่อัดจากมือถือ');
+                addActivityLog('📱 สั่งจากมือถือ: ประกาศด้วยเสียงที่อัดจากมือถือ');
+                const play = () => {
+                    activeButtonAudioObj = new Audio(url);
+                    activeButtonAudioObj.volume = isMuted ? 0 : masterVolume;
+                    setBroadcastStatus(true, 'กำลังเปิดเสียงประกาศที่ส่งมาจากมือถือ...');
+                    activeButtonAudioObj.onended = () => { setBroadcastStatus(false); URL.revokeObjectURL(url); };
+                    activeButtonAudioObj.play().catch(e => { console.warn(e); setBroadcastStatus(false); });
+                };
+                stopAllAudio(false);
+                if (d.chime === 'none') play(); else playBell(d.chime === 'chime_soft' ? 'chime_soft' : 'pre_pa', null, play);
+                if (isMuted) showToast('คอมโรงเรียนปิดเสียงลำโพงอยู่ จึงไม่มีเสียงออก', 'warn');
+            } catch (err) {
+                console.warn('rmPlayVoice', err);
+                notifyWarn('เปิดเสียงประกาศจากมือถือไม่สำเร็จ: ' + (err && err.message ? err.message : err));
+            }
+        }
+
         function remoteStop() { rmSend('stop', {}, 'หยุดเสียงทั้งหมด'); }
 
 
