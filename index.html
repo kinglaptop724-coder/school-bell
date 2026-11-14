@@ -679,6 +679,41 @@
             #relayCard .rl-steps em { font-size:12px; }
         }
     </style>
+    <style id="pa-ui">
+        #paTabContent_tts { --pa-gap: 22px; }
+        #paTabContent_tts .pa-step { font-size: 17px; }
+        #paTabContent_tts .pa-step .step-no { width: 28px; height: 28px; font-size: 14px; }
+        .pa-chips { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:10px; }
+        .pa-chips-lbl { font-size:13px; color:#6B6788; margin-right:2px; }
+        .pa-chips button { display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 14px; border-radius:999px; background:#fff; color:#4E33A3; border:1.5px solid #D6CCFC; font-size:13px; font-weight:600; cursor:pointer; transition:background-color .15s, border-color .15s; }
+        .pa-chips button:hover { background:#F5F2FF; border-color:#A28AF8; }
+        .pa-chips button i { font-size:12px; color:#7655E8; }
+        .pa-chips .pa-chip-clear { color:#6B6788; border-color:#E6E2F8; margin-left:auto; }
+        .pa-chips .pa-chip-clear i { color:#9591B3; }
+        .pa-textarea { font-size:16px !important; line-height:1.7 !important; min-height:120px; resize:vertical; }
+        .pa-send { width:100%; height:64px; border:0; border-radius:20px; background:#7655E8; color:#fff; font-size:19px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:12px; cursor:pointer; box-shadow:0 10px 22px -10px rgba(97,64,204,.7); transition:background-color .15s, transform .1s; }
+        .pa-send i { font-size:22px; }
+        .pa-send:hover { background:#6140CC; }
+        .pa-send:active { transform:scale(.99); }
+        .pa-send-hint { margin:8px 0 0; text-align:center; font-size:13px; color:#8A86A8; }
+        .pa-more { border:1.5px solid #E6E2F8; border-radius:20px; background:#fff; }
+        .pa-more > summary { list-style:none; cursor:pointer; user-select:none; display:flex; align-items:center; gap:10px; padding:14px 18px; font-size:15px; font-weight:700; color:#2E2A4A; }
+        .pa-more > summary::-webkit-details-marker { display:none; }
+        .pa-more > summary > i:first-child { color:#7655E8; }
+        .pa-more > summary small { font-size:12px; font-weight:500; color:#8A86A8; margin-left:4px; }
+        .pa-more > summary .pa-chev { margin-left:auto; font-size:12px; color:#9591B3; transition:transform .2s; }
+        .pa-more[open] > summary .pa-chev { transform:rotate(180deg); }
+        .pa-more[open] > summary { border-bottom:1px dashed #E6E2F8; }
+        .pa-more-body { padding:16px 18px 18px; display:flex; flex-direction:column; gap:18px; }
+        .pa-more-body .gem-card { background:#FAF9FF !important; }
+        /* Gemini: ปิดอยู่ → ซ่อนรายละเอียด เหลือแต่สวิตช์ */
+        .pa-more-body .gem-card:has(#geminiEnabled:not(:checked)) > :not(:first-child) { display:none; }
+        @media (max-width:640px) {
+            .pa-chips .pa-chip-clear { margin-left:0; }
+            .pa-more > summary small { display:block; margin:2px 0 0; }
+            .pa-send { height:60px; font-size:18px; }
+        }
+    </style>
     <style id="boot-splash">
         #bootSplash { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px; background: #E6E1FA; overflow: hidden; transition: opacity .55s ease, visibility .55s ease; }
         #bootSplash::before, #bootSplash::after { content: ""; position: absolute; border-radius: 999px; pointer-events: none; }
@@ -1209,15 +1244,35 @@
                         <!-- STEP 1: message -->
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-2.5">
-                                <label for="paTextInput" class="step-title"><span class="step-no">1</span>พิมพ์ข้อความที่ต้องการประกาศ</label>
+                                <label for="paTextInput" class="step-title pa-step"><span class="step-no">1</span>พิมพ์ข้อความที่จะประกาศ</label>
                                 <span id="paCharCount" class="text-xs text-slate-400 tabular-nums">0 ตัวอักษร</span>
                             </div>
-                            <textarea id="paTextInput" rows="4" placeholder="พิมพ์ข้อความที่ต้องการประกาศออกลำโพงโรงเรียน เช่น ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ" class="w-full rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-sky-500 focus:outline-none p-4 text-sm text-slate-800 placeholder-slate-400 leading-relaxed transition">ประชาสัมพันธ์จากห้องวิชาการ ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ ขอบคุณค่ะ</textarea>
+                            <div class="pa-chips">
+                                <span class="pa-chips-lbl">ข้อความสำเร็จรูป:</span>
+                                <button type="button" onclick="paUseTemplate('ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ ขอบคุณค่ะ')"><i class="fa-solid fa-users"></i>เรียกประชุมครู</button>
+                                <button type="button" onclick="paUseTemplate('ขอความร่วมมือนักเรียนทุกคนเข้าแถวอย่างเป็นระเบียบ ขอบคุณค่ะ')"><i class="fa-solid fa-child-reaching"></i>เรียกนักเรียน</button>
+                                <button type="button" onclick="paUseTemplate('ขอเรียนเชิญผู้ปกครองมาพบคุณครูที่ห้องประชาสัมพันธ์ในเวลานี้ค่ะ ขอบคุณค่ะ')"><i class="fa-solid fa-user-group"></i>เรียกผู้ปกครอง</button>
+                                <button type="button" class="pa-chip-clear" onclick="paUseTemplate('')"><i class="fa-solid fa-eraser"></i>ล้างข้อความ</button>
+                            </div>
+                            <textarea id="paTextInput" rows="4" placeholder="พิมพ์ข้อความตรงนี้ เช่น ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ" class="pa-textarea w-full rounded-2xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-sky-500 focus:outline-none p-4 text-sm text-slate-800 placeholder-slate-400 leading-relaxed transition">ประชาสัมพันธ์จากห้องวิชาการ ขอเชิญคณะครูทุกท่านประชุมพร้อมกันที่ห้องวิชาการในเวลานี้ค่ะ ขอบคุณค่ะ</textarea>
                         </div>
 
-                        <!-- STEP 2: speaking options -->
+                        <!-- STEP 2: send (ปุ่มหลัก) -->
                         <div>
-                            <div class="step-title mb-2.5"><span class="step-no">2</span>ตั้งค่าการพูด</div>
+                            <div class="step-title pa-step mb-2.5"><span class="step-no">2</span>กดส่งเสียงออกลำโพง</div>
+                            <button onclick="triggerAIAnnouncement()" class="pa-send">
+                                <i class="fa-solid fa-tower-broadcast"></i>
+                                <span>ส่งเสียงประกาศออกลำโพง</span>
+                            </button>
+                            <p class="pa-send-hint">ระบบจะเปิดเสียงนำ แล้วอ่านข้อความด้านบนให้ทันที</p>
+                        </div>
+
+                        <!-- MORE: ปรับแต่งเสียง (ไม่บังคับ) -->
+                        <details class="pa-more">
+                            <summary><i class="fa-solid fa-sliders"></i><span>ปรับแต่งเสียง <small>(ไม่บังคับ ใช้ค่าเดิมได้เลย)</small></span><i class="fa-solid fa-chevron-down pa-chev"></i></summary>
+                            <div class="pa-more-body">
+                        <div>
+                            
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                 <div class="opt-card">
                                     <div class="opt-label"><i class="fa-solid fa-bell text-orange-500"></i>เสียงนำก่อนพูด</div>
@@ -1239,15 +1294,6 @@
                                 </div>
                             </div>
                             <p class="text-xs text-slate-400 mt-2">โทนเสียงใช้ได้กับเสียงของเบราว์เซอร์เท่านั้น (เสียง Gemini ปรับได้เฉพาะความเร็ว)</p>
-                        </div>
-
-                        <!-- STEP 3: send -->
-                        <div>
-                            <div class="step-title mb-2.5"><span class="step-no">3</span>ส่งเสียงออกลำโพง</div>
-                            <button onclick="triggerAIAnnouncement()" class="w-full py-3.5 px-4 rounded-2xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-base flex items-center justify-center gap-2.5 transition cursor-pointer">
-                                <i class="fa-solid fa-tower-broadcast"></i>
-                                <span>ส่งเสียงประกาศออกลำโพง</span>
-                            </button>
                         </div>
 
                         <!-- Gemini voice card -->
@@ -1308,6 +1354,8 @@
                                 </div>
                             </details>
                         </div>
+                            </div>
+                        </details>
                     </div>
                 </section>
 
@@ -2801,6 +2849,13 @@
             };
 
             window.speechSynthesis.speak(utter);
+        }
+
+        function paUseTemplate(text) {
+            const t = document.getElementById('paTextInput');
+            t.value = text;
+            t.dispatchEvent(new Event('input'));
+            t.focus();
         }
 
         function setAnnouncementTemplate(text) {
