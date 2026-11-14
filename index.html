@@ -13,6 +13,21 @@
     <link rel="icon" href="icons/icon-192.png" type="image/png">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <!-- ไลบรารีทั้งหมดเก็บไว้ในโปรเจกต์ (ใช้ออฟไลน์ได้) -->
+    <style id="install-ui">
+        #installBar { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 70; display: none; align-items: center; gap: 12px; max-width: 520px; margin: 0 auto; padding: 12px 14px; border-radius: 18px; background: #fff; border: 1px solid #D6CCFC; box-shadow: 0 18px 40px -14px rgba(60,39,126,.55); }
+        #installBar.show { display: flex; }
+        #installBar img { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; }
+        #installBar .ib-t { flex: 1; min-width: 0; font-size: 13px; line-height: 1.35; color: #3C277E; }
+        #installBar .ib-t b { display: block; font-size: 14px; }
+        #installBar .ib-go { border: 0; background: #7655E8; color: #fff; font-weight: 700; font-size: 13px; padding: 10px 16px; border-radius: 12px; cursor: pointer; white-space: nowrap; }
+        #installBar .ib-x { border: 0; background: transparent; color: #8A86A8; font-size: 18px; padding: 6px 8px; cursor: pointer; }
+        #installSheet { position: fixed; inset: 0; z-index: 80; display: none; align-items: flex-end; justify-content: center; background: rgba(30,20,80,.55); }
+        #installSheet.show { display: flex; }
+        #installSheet .is-card { width: 100%; max-width: 480px; background: #fff; border-radius: 22px 22px 0 0; padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); max-height: 85vh; overflow: auto; }
+        #installSheet h3 { font-size: 17px; font-weight: 700; color: #3C277E; margin-bottom: 10px; }
+        #installSheet ol { padding-left: 22px; font-size: 14px; line-height: 1.8; color: #2E2A4A; }
+        #installSheet .is-close { width: 100%; margin-top: 14px; border: 0; background: #7655E8; color: #fff; font-weight: 700; padding: 12px; border-radius: 14px; font-size: 15px; cursor: pointer; }
+    </style>
     <link rel="stylesheet" href="vendor/tailwind.css">
     <link rel="stylesheet" href="vendor/fonts.css">
     <link rel="stylesheet" href="vendor/fa/css/all.min.css">
@@ -1714,6 +1729,13 @@
                                 <summary><i class="fa-solid fa-mobile-screen-button mr-1.5"></i>แจ้งเตือนบนมือถือ (Firebase)</summary>
                                 <div class="space-y-3 pt-3">
                                     <div>
+                                        <div class="opt-label mb-1.5"><i class="fa-solid fa-download text-slate-400"></i>ติดตั้งเป็นแอป</div>
+                                        <div class="flex flex-wrap gap-2">
+                                            <button id="installCardBtn" type="button" onclick="installApp()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-violet-50 text-violet-700 border border-violet-200 text-xs font-bold transition cursor-pointer">ติดตั้งแอปลงมือถือ</button>
+                                        </div>
+                                        <p id="installCardNote" class="text-xs text-slate-400 mt-1.5">แนะนำให้ติดตั้งก่อนเปิดแจ้งเตือน (iPhone จำเป็นต้องติดตั้ง)</p>
+                                    </div>
+                                    <div>
                                         <div class="opt-label mb-1.5"><i class="fa-solid fa-mobile-screen text-slate-400"></i>ใช้บนมือถือ (เครื่องที่ต้องการรับแจ้งเตือน)</div>
                                         <div class="flex flex-wrap gap-2">
                                             <button id="pushEnableBtn" type="button" onclick="enablePush()" class="px-3.5 py-2 rounded-xl bg-white hover:bg-violet-50 text-violet-700 border border-violet-200 text-xs font-bold transition cursor-pointer">เปิดแจ้งเตือนบนเครื่องนี้</button>
@@ -1878,6 +1900,19 @@
 </div><!-- /app-wrap -->
 
 <div id="toastStack" role="status" aria-live="polite" aria-atomic="false"></div>
+<div id="installBar" role="region" aria-label="ติดตั้งแอป">
+    <img src="icons/icon-192.png" alt="">
+    <div class="ib-t"><b>ติดตั้งแอปออดโรงเรียน</b><span id="installBarSub">เปิดได้จากหน้าจอมือถือ ไม่ต้องเปิดเบราว์เซอร์</span></div>
+    <button id="installBarGo" type="button" class="ib-go" onclick="installApp()">ติดตั้ง</button>
+    <button type="button" class="ib-x" onclick="dismissInstallBar()" aria-label="ปิด">✕</button>
+</div>
+<div id="installSheet" role="dialog" aria-modal="true" aria-label="วิธีติดตั้งแอป" onclick="if(event.target===this)closeInstallSheet()">
+    <div class="is-card">
+        <h3 id="installSheetTitle">วิธีติดตั้งแอป</h3>
+        <ol id="installSheetSteps"></ol>
+        <button type="button" class="is-close" onclick="closeInstallSheet()">เข้าใจแล้ว</button>
+    </div>
+</div>
 <button type="button" id="audioUnlockHint" onclick="unlockAudioOnce()"><i class="fa-solid fa-hand-pointer"></i><span>แตะที่หน้าจอ 1 ครั้งเพื่อเปิดระบบเสียง</span></button>
 <div id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
     <div class="cm-card">
@@ -4429,6 +4464,67 @@
                 } else say('รหัสไม่ถูกต้อง หรือเกิดข้อผิดพลาด: ' + ((j && j.error) || ''));
             } catch (e) { say('ผิดพลาด: ' + e.message); }
         }
+
+
+        /**************************************************************
+         * 14. ติดตั้งแอปลงมือถือ (PWA)
+         **************************************************************/
+        let deferredInstall = null;
+        const INSTALL_DISMISS_LS = 'nongbuadaeng_install_dismiss';
+        const UA = navigator.userAgent || '';
+        const IS_IOS = /iPhone|iPad|iPod/.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1);
+        const IS_MOBILE = IS_IOS || /Android/.test(UA);
+        const IS_INAPP = /Line\/|FBAN|FBAV|Instagram|MicroMessenger/i.test(UA);
+        function isStandalone() { return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
+        function installBarEl() { return document.getElementById('installBar'); }
+        function hideInstallUI() {
+            const b = installBarEl(); if (b) b.classList.remove('show');
+            const c = document.getElementById('installCardBtn'); if (c) c.disabled = true;
+            const n = document.getElementById('installCardNote'); if (n) n.textContent = 'ติดตั้งแล้ว ✅ (เปิดจากไอคอนบนหน้าจอ)';
+        }
+        function dismissInstallBar() {
+            try { localStorage.setItem(INSTALL_DISMISS_LS, String(Date.now())); } catch (e) {}
+            const b = installBarEl(); if (b) b.classList.remove('show');
+        }
+        function showInstallSheet(title, steps) {
+            document.getElementById('installSheetTitle').textContent = title;
+            document.getElementById('installSheetSteps').innerHTML = steps.map(t => '<li>' + t + '</li>').join('');
+            document.getElementById('installSheet').classList.add('show');
+        }
+        function closeInstallSheet() { document.getElementById('installSheet').classList.remove('show'); }
+        async function installApp() {
+            if (isStandalone()) { showToast('ติดตั้งแอปไว้แล้ว', 'info'); return; }
+            if (IS_INAPP) {
+                showInstallSheet('เปิดด้วยเบราว์เซอร์ก่อน', ['เบราว์เซอร์ในแอป LINE / Facebook ติดตั้งไม่ได้', 'แตะเมนู <b>⋮</b> หรือไอคอนแชร์ แล้วเลือก <b>เปิดในเบราว์เซอร์</b> (Chrome / Safari)', 'จากนั้นกดติดตั้งอีกครั้ง']);
+                return;
+            }
+            if (deferredInstall) {
+                deferredInstall.prompt();
+                try { await deferredInstall.userChoice; } catch (e) {}
+                deferredInstall = null;
+                return;
+            }
+            if (IS_IOS) {
+                showInstallSheet('ติดตั้งบน iPhone / iPad', ['เปิดหน้านี้ด้วย <b>Safari</b>', 'แตะปุ่ม <b>แชร์</b> (สี่เหลี่ยมมีลูกศรชี้ขึ้น) ที่แถบด้านล่าง', 'เลื่อนลงแล้วแตะ <b>เพิ่มไปยังหน้าจอโฮม</b>', 'แตะ <b>เพิ่ม</b> แล้วเปิดแอปจากไอคอนบนหน้าจอ']);
+                return;
+            }
+            showInstallSheet('ติดตั้งบน Android / คอมพิวเตอร์', ['ใช้ <b>Chrome</b> หรือ <b>Edge</b> เปิดลิงก์นี้', 'แตะเมนู <b>⋮</b> (มุมขวาบน)', 'เลือก <b>ติดตั้งแอป</b> หรือ <b>เพิ่มลงในหน้าจอหลัก</b>', 'ถ้าไม่เห็นเมนูนี้ ให้รีเฟรชหน้าแล้วรอสักครู่']);
+        }
+        function maybeShowInstallBar() {
+            if (isStandalone() || !IS_MOBILE) return;
+            let t = 0; try { t = parseInt(localStorage.getItem(INSTALL_DISMISS_LS) || '0', 10) || 0; } catch (e) {}
+            if (Date.now() - t < 7 * 24 * 3600 * 1000) return;
+            const sub = document.getElementById('installBarSub'), go = document.getElementById('installBarGo');
+            if (IS_INAPP) { sub.textContent = 'เปิดด้วย Chrome / Safari ก่อนจึงจะติดตั้งได้'; go.textContent = 'วิธีเปิด'; }
+            else if (IS_IOS) { sub.textContent = 'เพิ่มลงหน้าจอโฮม เพื่อใช้งานและรับแจ้งเตือน'; go.textContent = 'วิธีติดตั้ง'; }
+            installBarEl().classList.add('show');
+        }
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredInstall = e; maybeShowInstallBar(); });
+        window.addEventListener('appinstalled', () => { deferredInstall = null; hideInstallUI(); });
+        window.addEventListener('load', () => {
+            if (isStandalone()) { hideInstallUI(); return; }
+            if (IS_IOS || IS_INAPP) maybeShowInstallBar();
+        });
 
         window.onload = function () {
             loadGeminiSettings();
