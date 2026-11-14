@@ -1430,7 +1430,6 @@
 
         <nav id="mainTabs" aria-label="เมนูหลัก" class="top-nav">
             <button data-tabbtn="home" onclick="switchMainTab('home')" class="main-tab" title="หน้าหลัก" aria-label="หน้าหลัก"><i class="fa-solid fa-house"></i><span>หน้าหลัก</span></button>
-            <button data-tabbtn="bell" onclick="switchMainTab('bell')" class="main-tab" title="ตีออด" aria-label="ตีออด"><i class="fa-solid fa-bell"></i><span>ตีออด</span></button>
             <button data-tabbtn="library" onclick="switchMainTab('library')" class="main-tab" title="คลังเสียง" aria-label="คลังเสียง"><i class="fa-solid fa-compact-disc"></i><span>คลังเสียง</span><em id="tabCount_library" class="tab-count">0</em></button>
             <button data-tabbtn="schedule" onclick="switchMainTab('schedule')" class="main-tab" title="ตารางเวลา" aria-label="ตารางเวลา"><i class="fa-solid fa-calendar-days"></i><span>ตารางเวลา</span></button>
             <button data-tabbtn="remote" onclick="switchMainTab('remote')" class="main-tab" title="รีโมต" aria-label="รีโมต"><i class="fa-solid fa-tower-broadcast"></i><span>รีโมต</span></button>
@@ -4751,7 +4750,7 @@
             }
         });
 
-        const MAIN_TABS = ['home', 'bell', 'library', 'schedule', 'remote'];
+        const MAIN_TABS = ['home', 'library', 'schedule', 'remote'];
         function switchMainTab(name) {
             if (!MAIN_TABS.includes(name)) name = 'home';
             document.querySelectorAll('.tab-panel').forEach(el => el.classList.toggle('active', el.dataset.tab === name));
