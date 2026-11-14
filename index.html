@@ -13,6 +13,30 @@
     <link rel="icon" href="icons/icon-192.png" type="image/png">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     <!-- ไลบรารีทั้งหมดเก็บไว้ในโปรเจกต์ (ใช้ออฟไลน์ได้) -->
+    <style id="welcome-anim-ui">
+        #tabPanels .welcome-card {
+            background-color: #8160EE !important;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,.22) 0, rgba(255,255,255,0) 38%),
+                radial-gradient(circle at 80% 75%, rgba(253,200,67,.22) 0, rgba(253,200,67,0) 36%),
+                linear-gradient(120deg, #A387FC 0%, #7B57EC 35%, #9575FA 65%, #6F4BE0 100%) !important;
+            background-size: 180% 180%, 180% 180%, 240% 240% !important;
+            background-repeat: no-repeat !important;
+            animation: welcome-flow 14s ease-in-out infinite;
+        }
+        #tabPanels .welcome-card::before { animation: welcome-float-a 9s ease-in-out infinite; }
+        #tabPanels .welcome-card::after  { animation: welcome-float-b 11s ease-in-out infinite; }
+        @keyframes welcome-flow {
+            0%   { background-position: 0% 0%, 100% 100%, 0% 50%; }
+            50%  { background-position: 100% 60%, 0% 20%, 100% 50%; }
+            100% { background-position: 0% 0%, 100% 100%, 0% 50%; }
+        }
+        @keyframes welcome-float-a { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-26px, 22px) scale(1.12); } }
+        @keyframes welcome-float-b { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, -22px) scale(1.15); } }
+        @media (prefers-reduced-motion: reduce) {
+            #tabPanels .welcome-card, #tabPanels .welcome-card::before, #tabPanels .welcome-card::after { animation: none; }
+        }
+    </style>
     <style id="header-compact-ui">
         @media (max-width: 640px) {
             .header-actions { gap: 5px; }
