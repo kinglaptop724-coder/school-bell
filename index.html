@@ -1087,6 +1087,32 @@
             .rm-bells { grid-template-columns:1fr 1fr; }
             .rm-bell { height:60px; font-size:13.5px; padding:0 10px; }
         }
+            /* ===== การ์ดรับคำสั่ง (โหมดคอมโรงเรียน) ===== */
+        .rmx-card { background:linear-gradient(135deg,#F8F5FF 0%,#FFF7EE 100%); border:1.5px solid #E6DFFB; border-radius:22px; padding:18px; }
+        .rmx-head { display:flex; align-items:center; gap:14px; }
+        .rmx-ico { width:46px; height:46px; border-radius:15px; background:linear-gradient(135deg,#A28AF8,#7655E8); color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; box-shadow:0 8px 18px -10px rgba(97,64,204,.8); }
+        .rmx-ttl { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+        .rmx-ttl b { font-size:17px; color:#2E2A4A; line-height:1.3; }
+        .rmx-ttl small { font-size:12.5px; color:#6B6788; line-height:1.55; }
+        .rmx-sw { flex-shrink:0; display:flex; align-items:center; cursor:pointer; }
+        #rmRxStatus { padding:14px 16px; font-size:15px; }
+        #rmRxStatus.on .rm-dot { animation:rmx-pulse 1.8s infinite; }
+        @keyframes rmx-pulse { 0%,100% { box-shadow:0 0 0 4px #DCFCE7; } 50% { box-shadow:0 0 0 8px rgba(220,252,231,.35); } }
+        .rmx-last { display:flex; align-items:flex-start; gap:12px; margin-top:12px; padding:12px 14px; background:#fff; border:1.5px dashed #D9D2FA; border-radius:16px; }
+        .rmx-last > i { width:32px; height:32px; border-radius:10px; background:#F1EDFF; color:#7655E8; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+        .rmx-last .rm-last { margin:0; font-size:13.5px; color:#4A4560; font-weight:600; line-height:1.55; padding-top:5px; word-break:break-word; }
+        .rmx-tips { margin-top:14px; padding:16px; background:#FAF9FF; border:1.5px solid #ECE8FA; border-radius:18px; }
+        .rmx-tips-t { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; color:#2E2A4A; margin-bottom:10px; }
+        .rmx-tips-t i { color:#16A34A; }
+        .rmx-tips ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+        .rmx-tips li { display:flex; align-items:flex-start; gap:12px; font-size:13.5px; color:#4A4560; line-height:1.6; }
+        .rmx-tips li > i { width:28px; height:28px; border-radius:9px; background:#EFEAFF; color:#7655E8; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; }
+        .rmx-tips li > span { padding-top:2px; }
+        @media (max-width:640px) {
+            .rmx-card { padding:14px; }
+            .rmx-head { align-items:flex-start; }
+            .rmx-ttl small { display:none; }
+        }
     </style>
     <style id="nav-icons-ui">
         /* เมนูด้านบน (จอ >= 1024px): แสดงเฉพาะไอคอน ส่วนมือถือ/แท็บเล็ตที่เมนูอยู่ด้านล่างยังมีข้อความ */
@@ -1993,22 +2019,34 @@
 
                     <!-- ===== โหมดคอมโรงเรียน: ผู้รับคำสั่ง ===== -->
                     <div id="rmPcPanel" class="hidden">
-                        <div class="gem-card">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="flex items-start gap-3 min-w-0">
-                                    <div class="gem-icon"><i class="fa-solid fa-satellite-dish"></i></div>
-                                    <div class="min-w-0">
-                                        <div class="text-sm font-bold text-slate-800">รับคำสั่งจากมือถือ</div>
-                                        <div class="text-xs text-slate-500 leading-snug">เปิดบนคอมที่ต่อลำโพงเท่านั้น ระบบจะถามหาคำสั่งใหม่ทุก 4 วินาที แล้วเล่นเสียงออกลำโพงให้เอง</div>
-                                    </div>
+                        <div class="rmx-card">
+                            <div class="rmx-head">
+                                <div class="rmx-ico"><i class="fa-solid fa-satellite-dish"></i></div>
+                                <div class="rmx-ttl">
+                                    <b>รับคำสั่งจากมือถือ</b>
+                                    <small>เปิดบนคอมที่ต่อลำโพงเท่านั้น ระบบจะถามหาคำสั่งใหม่ทุก 4 วินาที แล้วเล่นเสียงออกลำโพงให้เอง</small>
                                 </div>
-                                <label class="shrink-0 flex items-center gap-2 cursor-pointer select-none pt-0.5" title="เปิด/ปิดการรับคำสั่ง">
+                                <label class="rmx-sw" title="เปิด/ปิดการรับคำสั่ง">
                                     <input id="rmRxToggle" type="checkbox" onchange="toggleRemoteRx()" class="tg">
                                 </label>
                             </div>
-                            <div id="rmRxStatus" class="rm-status" style="margin-top:14px"><span class="rm-dot"></span><span id="rmRxStatusText">ปิดอยู่</span></div>
-                            <div id="rmRxLast" class="rm-last">ยังไม่มีคำสั่งจากมือถือ</div>
-                            <p class="rm-note">ต้องเปิดหน้านี้ค้างไว้ ตั้งคอมไม่ให้ Sleep และอย่าย่อหน้าต่างไว้นานๆ (เบราว์เซอร์อาจชะลอการทำงานของแท็บที่ถูกซ่อน) · รหัสที่ใช้คือ "รหัสแจ้งเตือน" เดียวกับที่ตั้งไว้ในหน้าประกาศเสียง → แจ้งเตือนบนมือถือ ต้องตรงกันทั้งสองเครื่อง</p>
+
+                            <div id="rmRxStatus" class="rm-status" style="margin-top:16px"><span class="rm-dot"></span><span id="rmRxStatusText">ปิดอยู่</span></div>
+
+                            <div class="rmx-last">
+                                <i class="fa-regular fa-clock"></i>
+                                <div id="rmRxLast" class="rm-last">ยังไม่มีคำสั่งจากมือถือ</div>
+                            </div>
+                        </div>
+
+                        <div class="rmx-tips">
+                            <div class="rmx-tips-t"><i class="fa-solid fa-circle-check"></i>ก่อนใช้งานตรวจให้ครบ</div>
+                            <ul>
+                                <li><i class="fa-solid fa-window-maximize"></i><span>เปิดหน้านี้ค้างไว้ และอย่าย่อหน้าต่างนานๆ (เบราว์เซอร์อาจชะลอแท็บที่ถูกซ่อน)</span></li>
+                                <li><i class="fa-solid fa-moon"></i><span>ตั้งคอมไม่ให้ Sleep</span></li>
+                                <li><i class="fa-solid fa-hand-pointer"></i><span>คลิกหรือแตะในหน้านี้อย่างน้อย 1 ครั้งหลังเปิด เสียงจึงจะเล่นได้</span></li>
+                                <li><i class="fa-solid fa-key"></i><span>"รหัสแจ้งเตือน" ต้องตรงกันทั้งสองเครื่อง (หน้าประกาศเสียง → ปรับแต่งเสียง → แจ้งเตือนบนมือถือ)</span></li>
+                            </ul>
                         </div>
                     </div>
                 </section>
