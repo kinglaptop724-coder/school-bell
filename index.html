@@ -1143,6 +1143,9 @@
             .rmb-sos-txt { flex-basis:calc(100% - 60px); }
             .rmb-sos-btn { width:100%; justify-content:center; }
         }
+            .sos-pill { width:40px; padding:0; justify-content:center; background:#FFF7ED; color:#EA580C; border-color:#FDBA74; }
+        .sos-pill:hover { background:#EA580C; color:#fff; border-color:#EA580C; }
+        .sos-pill i { font-size:16px; }
     </style>
     <style id="nav-icons-ui">
         /* เมนูด้านบน (จอ >= 1024px): แสดงเฉพาะไอคอน ส่วนมือถือ/แท็บเล็ตที่เมนูอยู่ด้านล่างยังมีข้อความ */
@@ -1446,6 +1449,7 @@
             <button id="lockNowBtn" type="button" onclick="lockApp()" class="lock-pill" title="ล็อกหน้าจอ (ออดอัตโนมัติยังทำงานตามเวลา)">
                 <i class="fa-solid fa-lock"></i><span>ล็อก</span>
             </button>
+            <button id="sosHeadBtn" type="button" onclick="headEmergency()" class="lock-pill sos-pill" title="แจ้งเหตุฉุกเฉิน / ซ้อมอพยพหนีไฟ" aria-label="แจ้งเหตุฉุกเฉิน"><i class="fa-solid fa-triangle-exclamation"></i></button>
         </div>
     </header>
 
@@ -1982,11 +1986,6 @@
                                 <span>พูดแจ้งเตือนหลังจบเสียงออด</span>
                             </label>
                             <div id="rmBellGrid" class="rmb-grid"></div>
-                            <div class="rmb-sos">
-                                <div class="rmb-sos-ico"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                                <div class="rmb-sos-txt"><b>สัญญาณแจ้งเหตุฉุกเฉิน / ซ้อมอพยพหนีไฟ</b><small>ไซเรนเตือนภัย + ประกาศให้อพยพไปจุดรวมพล</small></div>
-                                <button type="button" onclick="remoteEmergency()" class="rmb-sos-btn"><i class="fa-solid fa-triangle-exclamation"></i>แจ้งเหตุ</button>
-                            </div>
                         </div>
 
                         <div class="sec-title mb-2.5"><i class="fa-solid fa-bullhorn"></i>ประกาศเสียงตามสายโดยไม่ต้องเดินไปจับไมค์</div>
@@ -5193,6 +5192,9 @@
                 const sp = $id('rmAutoSpeak');
                 rmSend('bell', { bell, speak: sp ? sp.checked : true }, 'ตีออด ' + name);
             }
+        }
+        function headEmergency() {
+            if (rmRole === 'phone') remoteEmergency(); else openEmergencyModal();
         }
         async function remoteEmergency() {
             const ok = await askConfirm({ title: 'สั่งเปิดสัญญาณแจ้งเหตุฉุกเฉิน?', text: 'ลำโพงทั้งโรงเรียนจะส่งเสียงไซเรนและประกาศให้อพยพไปจุดรวมพลทันที ใช้เมื่อเกิดเหตุจริงหรือซ้อมอพยพเท่านั้น', okText: 'เปิดสัญญาณฉุกเฉิน', tone: 'warn', icon: 'fa-triangle-exclamation' });
